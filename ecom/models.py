@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+
 class Customer(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     profile_pic= models.ImageField(upload_to='profile_pic/CustomerProfilePic/',null=True,blank=True)
@@ -9,21 +9,34 @@ class Customer(models.Model):
     @property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name
-    @property
-    def get_id(self):
-        return self.user.id
     def __str__(self):
         return self.user.first_name
 
-
 class Product(models.Model):
+    # Added Category Choices
+    CAT_CHOICES = (
+        ('Package', 'Package'),
+        ('Standard', 'Standard'),
+        ('Premium', 'Premium'),
+    )
     name=models.CharField(max_length=40)
     product_image= models.ImageField(upload_to='product_image/',null=True,blank=True)
     price = models.PositiveIntegerField()
     description=models.CharField(max_length=40)
+    category = models.CharField(max_length=20, choices=CAT_CHOICES, default='Package') # Added this
+
     def __str__(self):
         return self.name
-
+    
+class Feedback(models.Model):
+    name = models.CharField(max_length=40)
+    # Added email to match contact form fields
+    email = models.EmailField(max_length=50, null=True, blank=True) 
+    feedback = models.CharField(max_length=500) # This stores the 'Message'
+    date = models.DateField(auto_now_add=True, null=True)
+    
+    def __str__(self):
+        return self.name
 
 class Orders(models.Model):
     STATUS =(
@@ -40,30 +53,15 @@ class Orders(models.Model):
     order_date= models.DateField(auto_now_add=True,null=True)
     status=models.CharField(max_length=50,null=True,choices=STATUS)
 
-
-class Feedback(models.Model):
-    name = models.CharField(max_length=40)
-    # Added email to match contact form fields
-    email = models.EmailField(max_length=50, null=True, blank=True) 
-    feedback = models.CharField(max_length=500) # This stores the 'Message'
-    date = models.DateField(auto_now_add=True, null=True)
-    
-    def __str__(self):
-        return self.name
-    
-    
 class CabinBooking(models.Model):
-    STATUS =(
-        ('Pending','Pending'),
-        ('Confirmed','Confirmed'),
-        ('Cancelled','Cancelled'),
-    )
+    STATUS = (('Pending','Pending'), ('Confirmed','Confirmed'), ('Cancelled','Cancelled'))
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE, null=True)
-    cabin_type = models.CharField(max_length=100) # e.g., Single, Double, VIP
+    source = models.CharField(max_length=100, null=True)
+    destination = models.CharField(max_length=100, null=True)
+    cabin_type = models.CharField(max_length=100)
     booking_date = models.DateField()
+    cabin_no = models.CharField(max_length=20, null=True, blank=True)
+    assigned_price = models.PositiveIntegerField(null=True, blank=True)
     message = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=50, default='Pending', choices=STATUS)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.customer.user.first_name} - {self.cabin_type}"

@@ -4,131 +4,158 @@
 
 {% if redirect_to %}
 <script>
-  location.replace("{{redirect_to}}")
+  location.replace("{{redirect_to}}")
 </script>
 {% endif %}
 
 <style media="screen">
-  .cart-page-wrapper {
-    margin-top: 120px;
-    margin-bottom: 100px;
-  }
+  .cart-page-wrapper {
+    margin-top: 120px;
+    margin-bottom: 100px;
+  }
 
-  .panel-custom {
-    border-color: #66A3FF;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
+  .panel-custom {
+    border-color: #66A3FF;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
 
-  .panel-custom > .panel-heading {
-    color: #ffffff;
-    background-color: #66A3FF;
-    border-color: #66A3FF;
-    font-weight: bold;
-    font-size: 20px;
-    padding: 15px;
-  }
+  .panel-custom > .panel-heading {
+    color: #ffffff;
+    background-color: #66A3FF;
+    border-color: #66A3FF;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 15px;
+  }
 
-  /* Status Badge Colors */
-  .badge-pending { background-color: #ffc107; color: #000; }
-  .badge-confirmed { background-color: #28a745; color: #fff; }
-  .badge-cancelled { background-color: #dc3545; color: #fff; }
+  /* Status Badge Styling */
+  .badge-pending { background-color: #ffc107; color: #000; padding: 5px 10px; border-radius: 4px; }
+  .badge-confirmed { background-color: #28a745; color: #fff; padding: 5px 10px; border-radius: 4px; }
+  .badge-cancelled { background-color: #dc3545; color: #fff; padding: 5px 10px; border-radius: 4px; }
+  
+  .text-price { color: #2e7d32; font-weight: bold; }
+  .cabin-no-display { background: #eef2f3; padding: 2px 8px; border-radius: 4px; font-family: monospace; border: 1px solid #ddd; }
 
-  .btn-purchase {
-    background-color: #4cd964;
-    color: white;
-    font-size: 20px;
-    padding: 10px 40px;
-    border-radius: 5px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-  }
-  .btn-purchase:hover { background-color: #eb6025; color: white; }
+  .btn-purchase {
+    background-color: #4cd964;
+    color: white;
+    font-size: 20px;
+    padding: 10px 40px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  .btn-purchase:hover { background-color: #eb6025; color: white; }
 </style>
 
 <div class="container cart-page-wrapper">
-  
-  <div class="panel panel-custom">
-    <div class="panel-heading">
-      <h3 class="panel-title text-center"><i class="fa fa-shopping-cart"></i> My Shopping Cart</h3>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered">
-        <thead class="bg-light">
-          <tr>
-            <th>Product Name</th>
-            <th>Image</th>
-            <th>Price</th>
-            <th class="text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in products %}
-            {% if p %}
-            <tr>
-              <td><strong>{{p.name}}</strong></td>
-              <td><img src="{% static p.product_image.url %}" alt="Product" height="50px" width="50px" /></td>
-              <td>৳ {{p.price}}</td>
-              <td class="text-center">
-                <a class="btn btn-danger btn-sm" href="{% url 'remove-from-cart' p.id %}?next_page={{request.path}}">
-                  <i class="fa fa-trash"></i>
+  
+    <div class="panel panel-custom">
+    <div class="panel-heading">
+      <h3 class="panel-title text-center"><i class="fa fa-shopping-cart"></i> My Shopping Cart</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered">
+        <thead class="bg-light">
+          <tr>
+            <th>Product Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+            {% if p %}
+            <tr>
+              <td><strong>{{p.name}}</strong></td>
+              <td><img src="{% static p.product_image.url %}" alt="Product" height="50px" width="50px" /></td>
+              <td>৳ {{p.price}}</td>
+              <td class="text-center">
+                <a class="btn btn-danger btn-sm" href="{% url 'remove-from-cart' p.id %}?next_page={{request.path}}">
+                  <i class="fa fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr><td colspan="4" class="text-center"><h4>No items in cart</h4></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if products %}
+  <div class="text-center mb-5">
+    <button class="btn btn-dark btn-lg" disabled>Total: ৳ {{total}}</button>
+    <a href="/customer-address" class="btn btn-purchase">Place Order <i class="fa fa-arrow-right"></i></a>
+  </div>
+  {% endif %}
+
+    <div class="panel panel-custom" style="border-color: #3E454C;">
+    <div class="panel-heading" style="background-color: #3E454C; border-color: #3E454C;">
+      <h3 class="panel-title text-center"><i class="fa fa-history"></i> My Cabin Booking History</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead class="bg-light">
+          <tr>
+            <th>Route (From-To)</th>
+            <th>Type</th>
+            <th>Travel Date</th>
+            <th>Cabin No.</th>
+            <th>Price</th>
+            <th class="text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+<tr>
+    <td>
+        <span class="text-primary">{{ b.source }}</span> 
+        <i class="fa fa-long-arrow-right mx-1"></i> 
+        <span class="text-danger">{{ b.destination }}</span>
+    </td>
+    <td><strong>{{ b.cabin_type }}</strong></td>
+    <td>{{ b.booking_date }}</td>
+    <td>
+        <span class="cabin-no-display">{{ b.cabin_no|default:"---" }}</span>
+    </td>
+    <td>
+        {% if b.assigned_price %}
+            <span class="text-price">৳ {{ b.assigned_price }}</span>
+            <br>
+            {% if b.status == 'Confirmed' %}
+                <a href="{% url 'cabin-payment' b.id %}" class="btn btn-xs btn-success mt-1" style="font-size: 10px;">
+                    <i class="fa fa-credit-card"></i> Pay Now
                 </a>
-              </td>
-            </tr>
             {% endif %}
-          {% empty %}
-            <tr><td colspan="4" class="text-center"><h4>No items in cart</h4></td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  {% if products %}
-  <div class="text-center mb-5">
-    <button class="btn btn-dark btn-lg" disabled>Total: ৳ {{total}}</button>
-    <a href="/customer-address" class="btn btn-purchase">Place Order <i class="fa fa-arrow-right"></i></a>
-  </div>
-  {% endif %}
-
-  <div class="panel panel-custom" style="border-color: #3E454C;">
-    <div class="panel-heading" style="background-color: #3E454C; border-color: #3E454C;">
-      <h3 class="panel-title text-center"><i class="fa fa-history"></i> Cabin Booking History</h3>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-hover table-striped">
-        <thead class="bg-light">
-          <tr>
-            <th>Cabin Type</th>
-            <th>Booking Date</th>
-            <th>Applied On</th>
-            <th class="text-center">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for b in bookings %}
-          <tr>
-            <td><strong>{{ b.cabin_type }}</strong></td>
-            <td>{{ b.booking_date }}</td>
-            <td>{{ b.created_at|date:"d M Y" }}</td>
-            <td class="text-center">
-              {% if b.status == 'Pending' %}
-                <span class="badge badge-pending">Pending</span>
-              {% elif b.status == 'Confirmed' %}
-                <span class="badge badge-confirmed">Confirmed</span>
-              {% else %}
-                <span class="badge badge-cancelled">Cancelled</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="4" class="text-center"><h4>No booking history found</h4></td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+        {% else %}
+            <span class="text-muted small">---</span>
+        {% endif %}
+    </td>
+      <td class="text-center">
+          {% if b.status == 'Pending' %}
+              <span class="badge badge-pending">Pending</span>
+          {% elif b.status == 'Confirmed' %}
+              <span class="badge badge-confirmed">Confirmed</span>
+              <br>
+              <a href="{% url 'download-cabin-invoice' b.id %}" class="btn btn-xs btn-primary mt-2" style="font-size: 10px;">
+                  <i class="fa fa-download"></i> Ticket PDF
+              </a>
+          {% else %}
+              <span class="badge badge-cancelled">Cancelled</span>
+          {% endif %}
+      </td>
+</tr>
+{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 </div>
 

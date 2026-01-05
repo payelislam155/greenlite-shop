@@ -1,0 +1,39 @@
+{% extends 'ecom/customer_base.html' %}
+{% block content %}
+<div class="container" style="margin-top: 150px; margin-bottom: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h4><i class="fa fa-lock"></i> Secure Checkout</h4>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="text-muted">Cabin Ticket Details:</h5>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between">
+                            Route: <span>{{booking.source}} to {{booking.destination}}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Cabin No: <b>{{booking.cabin_no}}</b>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Travel Date: <span>{{booking.booking_date}}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between bg-light">
+                            <span class="h4">Total Amount:</span>
+                            <span class="h4 text-success">৳ {{booking.assigned_price}}</span>
+                        </li>
+                    </ul>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'cabin-payment-success' booking.id %}" class="btn btn-success btn-lg shadow">
+                            PAY WITH BKASH / NAGAD
+                        </a>
+                        <a href="{% url 'cart' %}" class="btn btn-link text-muted text-center">Cancel Payment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

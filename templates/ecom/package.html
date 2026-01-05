@@ -1,0 +1,166 @@
+{% extends 'ecom/customer_base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* Layout */
+    .package-container { margin-top: 110px; padding-bottom: 60px; background-color: #f8f9fa; }
+    
+    /* Sidebar Filter Card */
+    .filter-sidebar {
+        background: white; border-radius: 20px; padding: 25px;
+        border: 2px solid #66A3FF; box-shadow: 0 10px 30px rgba(102, 163, 255, 0.1);
+        position: sticky; top: 100px;
+    }
+
+    /* Category Icon Links - Visual Design */
+    .cat-icon-link {
+        display: flex; align-items: center; padding: 12px 15px; margin-bottom: 10px;
+        border-radius: 12px; text-decoration: none !important; color: #444;
+        transition: all 0.3s ease; background: #f8f9fa; border: 1px solid #eee;
+        font-weight: 700;
+    }
+    
+    .cat-icon-link i { 
+        width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+        background: white; border-radius: 8px; color: #fe5f00; margin-right: 12px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.05); transition: 0.3s;
+    }
+
+    /* Active State */
+    .cat-icon-link.active { background: #66A3FF; color: white; border-color: #66A3FF; transform: scale(1.02); }
+    .cat-icon-link.active i { color: #66A3FF; background: white; }
+    
+    .cat-icon-link:hover:not(.active) { background: #eff6e0; border-color: #66A3FF; }
+
+    /* Original Product Card Styles (Maintained) */
+    .el-wrapper {
+        width: 100%; max-width: 360px; padding: 15px; margin: 15px auto;
+        background-color: #66A3FF; border: 3px solid #fe5f00;
+        position: relative; border-radius: 12px; transition: 0.3s;
+    }
+    .el-wrapper:hover { transform: translateY(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    .el-wrapper:hover .h-bg { left: 0px; }
+    .el-wrapper:hover .price { left: 20px; transform: translateY(-50%); color: #f3f3f3; }
+    .el-wrapper:hover .add-to-cart { left: 50%; }
+    .el-wrapper:hover .img { filter: blur(7px); opacity: 0.4; }
+    .el-wrapper:hover .info-inner { bottom: 155px; }
+    .el-wrapper:hover .a-size { transition-delay: 300ms; bottom: 50px; opacity: 1; }
+    .el-wrapper .box-up { width: 100%; height: 300px; position: relative; overflow: hidden; text-align: center; }
+    .el-wrapper .box-down { width: 100%; height: 60px; position: relative; overflow: hidden; }
+    .el-wrapper .img { transition: all 800ms cubic-bezier(0, 0, 0.18, 1); }
+    .h-bg { transition: all 800ms cubic-bezier(0, 0, 0.18, 1); width: 660px; height: 100%; background-color: #4cd964; border-radius: 10px; position: absolute; left: -659px; }
+    .info-inner { transition: all 400ms cubic-bezier(0, 0, 0.18, 1); position: absolute; width: 100%; bottom: 10px; }
+    .info-inner .p-company { display: block; font-family: 'Lato', sans-serif; font-size: 16px; color: #fbfbfb; }
+    .a-size { transition: all 300ms cubic-bezier(0, 0, 0.18, 1); position: absolute; width: 100%; bottom: -20px; font-family: 'PT Sans', sans-serif; color: #2b2b2b; font-weight: 600; opacity: 0; padding: 0 10px; }
+    .cart { display: block; position: absolute; width: 100%; height: 100%; top: 0; left: 0; font-weight: 700; }
+    .cart .price { transition: all 600ms cubic-bezier(0, 0, 0.18, 1); transition-delay: 100ms; display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; color: #252525; }
+    .cart .add-to-cart { transition: all 600ms cubic-bezier(0, 0, 0.18, 1); transition-delay: 100ms; display: block; position: absolute; top: 50%; left: 110%; transform: translate(-50%, -50%); }
+    .cart .add-to-cart .txt { font-size: 12px; color: #fff; letter-spacing: 0.045em; text-transform: uppercase; white-space: nowrap; }
+
+    /* Mobile adjustments */
+    @media (max-width: 991px) {
+        .filter-sidebar { position: static; margin-bottom: 20px; padding: 15px; }
+        .category-row-mobile { 
+            display: flex; overflow-x: auto; white-space: nowrap; 
+            padding-bottom: 15px; gap: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .category-row-mobile::-webkit-scrollbar { display: none; }
+        .cat-icon-link { margin-bottom: 0; flex: 0 0 auto; min-width: 130px; justify-content: center; }
+    }
+</style>
+
+<div class="container-fluid package-container px-lg-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="filter-sidebar">
+                <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-th-large me-2 text-primary"></i>Categories</h5>
+                
+                <div class="category-row-mobile mb-4">
+                    <a href="{% url 'package' %}" class="cat-icon-link {% if not current_category %}active{% endif %}">
+                        <i class="fas fa-border-all"></i> <span>All Items</span>
+                    </a>
+                    <a href="{% url 'package' %}?category=Package" class="cat-icon-link {% if current_category == 'Package' %}active{% endif %}">
+                        <i class="fas fa-box-open"></i> <span>Package</span>
+                    </a>
+                    <a href="{% url 'package' %}?category=Standard" class="cat-icon-link {% if current_category == 'Standard' %}active{% endif %}">
+                        <i class="fas fa-star"></i> <span>Standard</span>
+                    </a>
+                    <a href="{% url 'package' %}?category=Premium" class="cat-icon-link {% if current_category == 'Premium' %}active{% endif %}">
+                        <i class="fas fa-crown"></i> <span>Premium</span>
+                    </a>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-filter me-2 text-primary"></i>Refine Settings</h5>
+                <form method="get" action="{% url 'package' %}">
+                    {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">MAX BUDGET: ৳<span id="priceVal" class="text-primary">{{ max_price|default:5000 }}</span></label>
+                        <input type="range" class="form-range" min="0" max="10000" step="100" name="max_price" value="{{ max_price|default:5000 }}" oninput="document.getElementById('priceVal').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">SORTING</label>
+                        <select name="sort" class="form-select border-0 bg-light shadow-none" onchange="this.form.submit()" style="border-radius: 10px;">
+                            <option value="">Default Arrival</option>
+                            <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2" style="border-radius: 12px; background: #66A3FF; border: none;">Apply Filters</button>
+                    <a href="{% url 'package' %}" class="btn btn-link w-100 text-decoration-none text-muted small mt-2">Clear All Filters</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <h4 class="mb-4 fw-bold">
+                Showing: <span class="text-primary">{% if word %}{{ word }}{% else %}All Collection{% endif %}</span>
+            </h4>
+
+            <div class="row">
+                {% for p in products %}
+                <div class="col-md-6 col-lg-4 col-sm-6">
+                    <div class="el-wrapper">
+                        <div class="box-up">
+                            <img class="img" src="{% static p.product_image.url %}" alt="pic" height="300px" width="300px">
+                            <div class="img-info">
+                                <div class="info-inner">
+                                    <span style="background-color:#fe5f00; border-radius: 10px; font-weight: bold;" class="p-company">{{p.name}}</span>
+                                </div>
+                                <div class="a-size">{{p.description}}</div>
+                            </div>
+                        </div>
+
+                        <div class="box-down">
+                            <div class="h-bg"><div class="h-bg-inner"></div></div>
+                            <a class="cart" href="{% url 'add-to-cart' p.id %}?next_page={{ request.get_full_path|urlencode }}">
+                                <span class="price">৳ {{p.price}}</span>
+                                <span class="add-to-cart">
+                                    <span class="txt"><i class="fa fa-shopping-cart"></i> Add To Cart</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-white rounded-3 shadow-sm">
+                        <i class="fas fa-folder-open text-muted mb-3" style="font-size: 50px;"></i>
+                        <h4 class="text-muted">No products found in "{{ word }}".</h4>
+                        <a href="{% url 'package' %}" class="btn btn-primary mt-3 px-4">Refresh Collection</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

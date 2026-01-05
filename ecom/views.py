@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import logout
+import datetime # Add this import at the top
+from django.utils import timezone # Alternatively, use Django's timezone
 
 
 # def home_view(request):
@@ -225,55 +227,65 @@ def view_feedback_view(request):
 #------------------------ PUBLIC CUSTOMER RELATED VIEWS START ---------------------
 #---------------------------------------------------------------------------------
 def search_view(request):
-    # whatever user write in search box we get in query
-    query = request.GET['query']
-    products=models.Product.objects.all().filter(name__icontains=query)
+    # Get the search query
+    query = request.GET.get('query', '')
+    products = models.Product.objects.all().filter(name__icontains=query)
+    
+    # Initialize default values for the sidebar to prevent errors in package.html
+    current_category = request.GET.get('category', '')
+    current_sort = request.GET.get('sort', '')
+    max_price = request.GET.get('max_price', 10000)
+
+    # Cart counter logic
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
-        counter=product_ids.split('|')
-        product_count_in_cart=len(set(counter))
+        counter = product_ids.split('|')
+        product_count_in_cart = len(set(counter))
     else:
-        product_count_in_cart=0
+        product_count_in_cart = 0
 
-    # word variable will be shown in html when user click on search button
-    word="Searched Result :"
+    # word variable for heading
+    word = "Search Results for: " + query if query else "All Products"
 
-    if request.user.is_authenticated:
-        return render(request,'ecom/customer_home.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart, 'search_text': query})
-    return render(request,'ecom/index.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart, 'search_text': query})
-
+    # We now point ALWAYS to package.html to use the premium layout
+    return render(request, 'ecom/package.html', {
+        'products': products,
+        'word': word,
+        'product_count_in_cart': product_count_in_cart,
+        'search_text': query,
+        'current_category': current_category,
+        'current_sort': current_sort,
+        'max_price': max_price
+    })
+    
+    
+    
 
 # any one can add product to cart, no need of signin
-def add_to_cart_view(request,pk):
-    products=models.Product.objects.all()
+def add_to_cart_view(request, pk):
+    # Get the product to show in the success message
+    product = models.Product.objects.get(id=pk)
+    
+    # Logic to handle the redirect URL
+    # If next_page is provided in the URL, use it; otherwise, default to home
+    next_page = request.GET.get('next_page', '/')
+    
+    # Prepare the response (we use redirect instead of render to avoid template hardcoding)
+    response = HttpResponseRedirect(next_page)
 
-    #for cart counter, fetching products ids added by customer from cookies
+    # Cookie logic for cart
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
-        counter=product_ids.split('|')
-        product_count_in_cart=len(set(counter))
-    else:
-        product_count_in_cart=1
-
-    response = render(request, 'ecom/index.html',{'products':products,'product_count_in_cart':product_count_in_cart,'redirect_to' : request.GET['next_page']})
-
-    #adding product id to cookies
-    if 'product_ids' in request.COOKIES:
-        product_ids = request.COOKIES['product_ids']
-        if product_ids=="":
-            product_ids=str(pk)
+        if product_ids == "":
+            product_ids = str(pk)
         else:
-            product_ids=str(product_ids)+"|"+str(pk)
+            product_ids = str(product_ids) + "|" + str(pk)
         response.set_cookie('product_ids', product_ids)
-        
     else:
-        product_ids = pk
-        response.set_cookie('product_ids', pk)
-  
+        response.set_cookie('product_ids', str(pk))
 
-    product=models.Product.objects.get(id=pk)
-    messages.info(request, product.name + ' added to cart successfully!')
-
+    messages.info(request, f"{product.name} added to cart successfully!")
+    
     return response
 
 
@@ -613,51 +625,124 @@ def logout_view(request):
     return render(request, 'ecom/logout.html')
 
 #cabin booking
-# --- CUSTOMER VIEW ---
+# --- CUSTOMER: Booking Request ---
 @login_required(login_url='customerlogin')
-@user_passes_test(is_customer)
 def customer_cabin_booking_view(request):
-    # We will use the same form logic or a model form
     if request.method == 'POST':
+        source = request.POST.get('source')
+        destination = request.POST.get('destination')
         cabin_type = request.POST.get('cabin_type')
         booking_date = request.POST.get('booking_date')
         message = request.POST.get('message')
         customer = models.Customer.objects.get(user_id=request.user.id)
         
-        # Saving to the database
         models.CabinBooking.objects.create(
-            customer=customer,
-            cabin_type=cabin_type,
-            booking_date=booking_date,
-            message=message
+            customer=customer, source=source, destination=destination,
+            cabin_type=cabin_type, booking_date=booking_date, message=message
         )
-        messages.info(request, 'Cabin Booking Request Sent Successfully!')
-        return redirect('customer-home')
+        messages.info(request, 'Request Sent! Admin will assign your Cabin No. and Ticket Price soon.')
+        return redirect('cart') # Redirect to cart to see history
     return render(request, 'ecom/customer_cabin_booking.html')
 
-# --- ADMIN VIEWS ---
+# --- ADMIN: View All Bookings ---
 @login_required(login_url='adminlogin')
 def admin_cabin_booking_view(request):
     bookings = models.CabinBooking.objects.all().order_by('-id')
     return render(request, 'ecom/admin_cabin_booking.html', {'bookings': bookings})
 
+# --- ADMIN: Confirm View (Assign No & Price) ---
+@login_required(login_url='adminlogin')
+def admin_confirm_cabin_view(request, pk):
+    booking = models.CabinBooking.objects.get(id=pk)
+    if request.method == 'POST':
+        booking.cabin_no = request.POST.get('cabin_no')
+        booking.assigned_price = request.POST.get('assigned_price')
+        booking.status = 'Confirmed'
+        booking.save()
+        return redirect('admin-cabin-booking')
+    return render(request, 'ecom/admin_confirm_cabin.html', {'booking': booking})
+
+# --- ADMIN: Action Views ---
 @login_required(login_url='adminlogin')
 def delete_cabin_booking_view(request, pk):
-    booking = models.CabinBooking.objects.get(id=pk)
-    booking.delete()
+    models.CabinBooking.objects.get(id=pk).delete()
     return redirect('admin-cabin-booking')
 
 @login_required(login_url='adminlogin')
-def update_cabin_status_view(request, pk, status):
+def pending_cabin_booking_view(request, pk):
     booking = models.CabinBooking.objects.get(id=pk)
-    booking.status = status
+    booking.status = 'Pending'
     booking.save()
     return redirect('admin-cabin-booking')
 
 
+# --- CUSTOMER: Cabin Payment View ---
+@login_required(login_url='customerlogin')
+def cabin_payment_view(request, pk):
+    booking = models.CabinBooking.objects.get(id=pk)
+    # Ensure only the owner can pay for this booking
+    if booking.customer.user != request.user:
+        return redirect('cart')
+        
+    return render(request, 'ecom/cabin_payment.html', {'booking': booking})
 
+# --- CUSTOMER: Payment Success for Cabin ---
+@login_required(login_url='customerlogin')
+def cabin_payment_success_view(request, pk):
+    booking = models.CabinBooking.objects.get(id=pk)
+    booking.status = 'Confirmed' # You could also add a 'Paid' status to your model
+    booking.save()
+    messages.success(request, f"Payment for Cabin {booking.cabin_no} successful!")
+    return redirect('cart')
+
+
+# --- CUSTOMER: Download Cabin Invoice ---
+import io
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from django.http import HttpResponse
+import datetime
+
+# --- PDF Rendering Engine (UTF-8 Support) ---
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = io.BytesIO()
+    # We use utf-8 to ensure the Taka symbol (৳) renders correctly
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("utf-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+# --- View to Extract Data and Generate Ticket ---
+@login_required(login_url='customerlogin')
+def download_cabin_invoice_view(request, pk):
+    # Fetch the specific booking
+    booking = models.CabinBooking.objects.get(id=pk)
+    
+    # Security check: Ensure the logged-in user owns this ticket
+    if booking.customer.user != request.user:
+        return redirect('cart')
+
+    # Prepare data for the PDF template
+    mydict = {
+        'customerName': request.user.get_full_name() or request.user.username,
+        'bookingDate': booking.booking_date,
+        'source': booking.source,
+        'destination': booking.destination,
+        'cabinType': booking.cabin_type,
+        'cabinNo': booking.cabin_no,
+        'price': booking.assigned_price,
+        'status': booking.status,
+        'invoiceDate': datetime.date.today(), 
+    }
+    
+    # Call the renderer
+    return render_to_pdf('ecom/cabin_invoice_pdf.html', mydict)
+
+#cart_view
 def cart_view(request):
-    # Shopping Cart Logic
+    # Shopping Cart Logic (Existing)
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
         counter = product_ids.split('|')
@@ -675,16 +760,60 @@ def cart_view(request):
             for p in products:
                 total = total + p.price
 
-    # --- NEW: Cabin Booking History Logic ---
+    # --- UPDATED: Cabin Booking History Logic ---
     bookings = None
     if request.user.is_authenticated:
         customer = models.Customer.objects.get(user_id=request.user.id)
+        # Fetching bookings including source, destination, cabin_no, and assigned_price
         bookings = models.CabinBooking.objects.filter(customer=customer).order_by('-created_at')
 
     context = {
         'products': products,
         'total': total,
         'product_count_in_cart': product_count_in_cart,
-        'bookings': bookings, # Send bookings to the template
+        'bookings': bookings, 
     }
     return render(request, 'ecom/cart.html', context)
+
+
+# ecom/views.py
+
+def package_view(request):
+    # Start with all products
+    products = models.Product.objects.all()
+    
+    # 1. Handle Category Filtering
+    category = request.GET.get('category')
+    if category:
+        products = products.filter(category=category)
+    
+    # 2. Handle Price Filtering
+    max_price = request.GET.get('max_price')
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    # 3. Handle Sorting
+    sort = request.GET.get('sort')
+    if sort == 'price_low':
+        products = products.order_by('price')
+    elif sort == 'price_high':
+        products = products.order_by('-price')
+    elif sort == 'name':
+        products = products.order_by('name')
+
+    # Cart Count logic
+    if 'product_ids' in request.COOKIES:
+        product_ids = request.COOKIES['product_ids']
+        counter = product_ids.split('|')
+        product_count_in_cart = len(set(counter))
+    else:
+        product_count_in_cart = 0
+
+    return render(request, 'ecom/package.html', {
+        'products': products,
+        'product_count_in_cart': product_count_in_cart,
+        'current_category': category,
+        'current_sort': sort,
+        'max_price': max_price,
+        'word': category if category else "All Items"
+    })

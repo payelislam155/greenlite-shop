@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .invoice-box {
+            max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; font-size: 16px; font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+        .header { background: #2e7d32; color: white; padding: 20px; text-align: center; }
+        .details { margin-top: 20px; }
+        .table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
+        .table th { background: #f8f9fa; border-bottom: 2px solid #ddd; padding: 10px; }
+        .table td { padding: 10px; border-bottom: 1px solid #eee; }
+        .total { text-align: right; margin-top: 30px; font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <h1>Greenlite Shop - Cabin Ticket</h1>
+        </div>
+        
+        <div class="details">
+            <p><strong>Passenger:</strong> {{ customerName }}</p>
+            <p><strong>Invoice Date:</strong> {{ invoiceDate }}</p>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Route</td><td>{{ source }} to {{ destination }}</td></tr>
+                <tr><td>Travel Date</td><td>{{ bookingDate }}</td></tr>
+                <tr><td>Cabin Type</td><td>{{ cabinType }}</td></tr>
+                <tr><td>Cabin Number</td><td>{{ cabinNo }}</td></tr>
+                <tr><td>Status</td><td>{{ status }}</td></tr>
+            </tbody>
+        </table>
+
+        <div class="total">
+            Total Amount: {{ price }} TK
+        </div>
+        
+        <div style="margin-top: 50px; text-align: center; color: #888;">
+            Thank you for choosing Greenlite Shop! Safe Journey.
+        </div>
+    </div>
+</body>
+</html>
