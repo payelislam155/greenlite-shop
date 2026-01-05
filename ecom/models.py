@@ -50,3 +50,20 @@ class Feedback(models.Model):
     
     def __str__(self):
         return self.name
+    
+    
+class CabinBooking(models.Model):
+    STATUS =(
+        ('Pending','Pending'),
+        ('Confirmed','Confirmed'),
+        ('Cancelled','Cancelled'),
+    )
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE, null=True)
+    cabin_type = models.CharField(max_length=100) # e.g., Single, Double, VIP
+    booking_date = models.DateField()
+    message = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=50, default='Pending', choices=STATUS)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.customer.user.first_name} - {self.cabin_type}"

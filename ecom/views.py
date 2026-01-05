@@ -612,5 +612,79 @@ def logout_view(request):
     logout(request)
     return render(request, 'ecom/logout.html')
 
+#cabin booking
+# --- CUSTOMER VIEW ---
+@login_required(login_url='customerlogin')
+@user_passes_test(is_customer)
+def customer_cabin_booking_view(request):
+    # We will use the same form logic or a model form
+    if request.method == 'POST':
+        cabin_type = request.POST.get('cabin_type')
+        booking_date = request.POST.get('booking_date')
+        message = request.POST.get('message')
+        customer = models.Customer.objects.get(user_id=request.user.id)
+        
+        # Saving to the database
+        models.CabinBooking.objects.create(
+            customer=customer,
+            cabin_type=cabin_type,
+            booking_date=booking_date,
+            message=message
+        )
+        messages.info(request, 'Cabin Booking Request Sent Successfully!')
+        return redirect('customer-home')
+    return render(request, 'ecom/customer_cabin_booking.html')
+
+# --- ADMIN VIEWS ---
+@login_required(login_url='adminlogin')
+def admin_cabin_booking_view(request):
+    bookings = models.CabinBooking.objects.all().order_by('-id')
+    return render(request, 'ecom/admin_cabin_booking.html', {'bookings': bookings})
+
+@login_required(login_url='adminlogin')
+def delete_cabin_booking_view(request, pk):
+    booking = models.CabinBooking.objects.get(id=pk)
+    booking.delete()
+    return redirect('admin-cabin-booking')
+
+@login_required(login_url='adminlogin')
+def update_cabin_status_view(request, pk, status):
+    booking = models.CabinBooking.objects.get(id=pk)
+    booking.status = status
+    booking.save()
+    return redirect('admin-cabin-booking')
 
 
+
+def cart_view(request):
+    # Shopping Cart Logic
+    if 'product_ids' in request.COOKIES:
+        product_ids = request.COOKIES['product_ids']
+        counter = product_ids.split('|')
+        product_count_in_cart = len(set(counter))
+    else:
+        product_count_in_cart = 0
+
+    products = None
+    total = 0
+    if 'product_ids' in request.COOKIES:
+        product_ids = request.COOKIES['product_ids']
+        if product_ids != "":
+            product_id_in_cart = product_ids.split('|')
+            products = models.Product.objects.all().filter(id__in=product_id_in_cart)
+            for p in products:
+                total = total + p.price
+
+    # --- NEW: Cabin Booking History Logic ---
+    bookings = None
+    if request.user.is_authenticated:
+        customer = models.Customer.objects.get(user_id=request.user.id)
+        bookings = models.CabinBooking.objects.filter(customer=customer).order_by('-created_at')
+
+    context = {
+        'products': products,
+        'total': total,
+        'product_count_in_cart': product_count_in_cart,
+        'bookings': bookings, # Send bookings to the template
+    }
+    return render(request, 'ecom/cart.html', context)

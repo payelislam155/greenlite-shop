@@ -53,5 +53,10 @@ urlpatterns = [
     path('customer-address', views.customer_address_view,name='customer-address'),
     path('payment-success', views.payment_success_view,name='payment-success'),
 
+    path('cabin-booking', views.customer_cabin_booking_view, name='customer-cabin-booking'),
+    path('admin-cabin-booking', views.admin_cabin_booking_view, name='admin-cabin-booking'),
+    path('delete-cabin/<int:pk>', views.delete_cabin_booking_view, name='delete-cabin'),
+    path('update-cabin-status/<int:pk>/<str:status>', views.update_cabin_status_view, name='update-cabin-status'),
+
 
 ]

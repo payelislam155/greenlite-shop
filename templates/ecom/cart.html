@@ -9,76 +9,57 @@
 {% endif %}
 
 <style media="screen">
-  /* Space for fixed navbar */
   .cart-page-wrapper {
     margin-top: 120px;
     margin-bottom: 100px;
   }
 
-  .panel-success {
+  .panel-custom {
     border-color: #66A3FF;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   }
 
-  .panel-success > .panel-heading {
+  .panel-custom > .panel-heading {
     color: #ffffff;
     background-color: #66A3FF;
     border-color: #66A3FF;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
     padding: 15px;
   }
 
-  .table img {
-    border-radius: 5px;
-    object-fit: cover;
-  }
-
-  .purchase-section {
-    text-align: center;
-    margin-top: 30px;
-  }
-
-  .btn-total {
-    background-color: #3E454C;
-    color: white;
-    font-size: 20px;
-    padding: 10px 25px;
-    border: none;
-    cursor: default;
-  }
+  /* Status Badge Colors */
+  .badge-pending { background-color: #ffc107; color: #000; }
+  .badge-confirmed { background-color: #28a745; color: #fff; }
+  .badge-cancelled { background-color: #dc3545; color: #fff; }
 
   .btn-purchase {
     background-color: #4cd964;
     color: white;
     font-size: 20px;
     padding: 10px 40px;
-    border: none;
-    transition: 0.3s;
-    text-decoration: none;
-    display: inline-block;
     border-radius: 5px;
     font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
   }
-
-  .btn-purchase:hover {
-    background-color: #eb6025;
-    color: white;
-  }
+  .btn-purchase:hover { background-color: #eb6025; color: white; }
 </style>
 
 <div class="container cart-page-wrapper">
-  <div class="panel panel-success">
+  
+  <div class="panel panel-custom">
     <div class="panel-heading">
-      <h3 class="panel-title text-center">My Shopping Cart</h3>
+      <h3 class="panel-title text-center"><i class="fa fa-shopping-cart"></i> My Shopping Cart</h3>
     </div>
     <div class="table-responsive">
-      <table class="table table-hover table-bordered" id="dev-table">
+      <table class="table table-hover table-bordered">
         <thead class="bg-light">
           <tr>
-            <th>Name</th>
+            <th>Product Name</th>
             <th>Image</th>
             <th>Price</th>
-            <th>Description</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
@@ -87,23 +68,17 @@
             {% if p %}
             <tr>
               <td><strong>{{p.name}}</strong></td>
-              <td><img src="{% static p.product_image.url %}" alt="Product" height="60px" width="60px" /></td>
+              <td><img src="{% static p.product_image.url %}" alt="Product" height="50px" width="50px" /></td>
               <td>৳ {{p.price}}</td>
-              <td>{{p.description|truncatewords:10}}</td>
               <td class="text-center">
                 <a class="btn btn-danger btn-sm" href="{% url 'remove-from-cart' p.id %}?next_page={{request.path}}">
-                  <i class="fa fa-trash"></i> Remove
+                  <i class="fa fa-trash"></i>
                 </a>
               </td>
             </tr>
             {% endif %}
           {% empty %}
-            <tr>
-              <td colspan="5" class="text-center">
-                <h3>Your cart is empty</h3>
-                <a href="/" class="btn btn-primary">Continue Shopping</a>
-              </td>
-            </tr>
+            <tr><td colspan="4" class="text-center"><h4>No items in cart</h4></td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -111,13 +86,50 @@
   </div>
 
   {% if products %}
-  <div class="purchase-section">
-    <button class="btn btn-total">Total: ৳ {{total}}</button>
-    <a href="/customer-address" class="btn btn-purchase">
-      <span>Purchase <i class="fa fa-arrow-right"></i></span>
-    </a>
+  <div class="text-center mb-5">
+    <button class="btn btn-dark btn-lg" disabled>Total: ৳ {{total}}</button>
+    <a href="/customer-address" class="btn btn-purchase">Place Order <i class="fa fa-arrow-right"></i></a>
   </div>
   {% endif %}
+
+  <div class="panel panel-custom" style="border-color: #3E454C;">
+    <div class="panel-heading" style="background-color: #3E454C; border-color: #3E454C;">
+      <h3 class="panel-title text-center"><i class="fa fa-history"></i> Cabin Booking History</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead class="bg-light">
+          <tr>
+            <th>Cabin Type</th>
+            <th>Booking Date</th>
+            <th>Applied On</th>
+            <th class="text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+          <tr>
+            <td><strong>{{ b.cabin_type }}</strong></td>
+            <td>{{ b.booking_date }}</td>
+            <td>{{ b.created_at|date:"d M Y" }}</td>
+            <td class="text-center">
+              {% if b.status == 'Pending' %}
+                <span class="badge badge-pending">Pending</span>
+              {% elif b.status == 'Confirmed' %}
+                <span class="badge badge-confirmed">Confirmed</span>
+              {% else %}
+                <span class="badge badge-cancelled">Cancelled</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center"><h4>No booking history found</h4></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 {% endblock content %}

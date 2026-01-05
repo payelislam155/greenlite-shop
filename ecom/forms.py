@@ -43,3 +43,14 @@ class ContactusForm(forms.Form):
     Name = forms.CharField(max_length=30)
     Email = forms.EmailField()
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
+    
+
+#cabin booking
+class CabinBookingForm(forms.ModelForm):
+    class Meta:
+        model = models.CabinBooking
+        fields = ['cabin_type', 'booking_date', 'message']
+        widgets = {
+            'booking_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
