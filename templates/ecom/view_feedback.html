@@ -1,0 +1,75 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <style media="screen">
+    .feedback-card {
+      transition: transform 0.2s;
+      border-left: 5px solid #66A3FF;
+      margin-bottom: 20px;
+    }
+    .feedback-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+    }
+    .delete-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .delete-btn:hover {
+        background-color: #d32f2f;
+        color: white;
+        text-decoration: none;
+    }
+  </style>
+</head>
+
+<br><br><br><br>
+<div class="container">
+    <h2 style="text-align:center; color:blue; font-weight: bold;">Customer Contack Information</h2>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {% for f in feedbacks %}
+            <div class="card feedback-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="card-title text-primary" style="margin-bottom: 5px;">
+                                <i class="fa fa-user"></i> {{ f.name }}
+                            </h4>
+                            <h6 class="text-muted mb-3">
+                                <i class="fa fa-envelope"></i> {{ f.email|default:"No Email Provided" }} 
+                                <span class="mx-2">|</span> 
+                                <i class="fa fa-calendar"></i> {{ f.date }}
+                            </h6>
+                        </div>
+                        <a href="{% url 'delete-feedback' f.id %}" class="delete-btn">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                    </div>
+                    <hr>
+                    <p class="card-text" style="font-size: 1.2rem; line-height: 1.6; color: #333;">
+                        {{ f.feedback }}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center mt-5">
+                <i class="fa fa-comment-slash fa-4x text-muted"></i>
+                <h3 class="text-muted mt-3">No Feedback or Messages yet.</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br><br><br>
+{% endblock content %}

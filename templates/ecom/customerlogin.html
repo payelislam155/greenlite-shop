@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% load widget_tweaks %}
+{% load static %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple E-commerce</title>
+      <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+      <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  </head>
+<body
+  class="min-h-screen flex items-center justify-center bg-cover bg-center"
+ style="background-image: url('{% static "images/bg9.jpg" %}')"
+>
+  <div class="w-[420px] bg-transparent border-2 border-white/40 backdrop-blur-[11px] text-white rounded-[12px] px-10 py-8">
+    <form action="" method="post">
+      {% csrf_token %}
+      <h1 class="text-[36px] text-center mb-4">Login</h1>
+
+      <!-- Username -->
+      <div class="relative w-full h-[50px] my-[30px]">
+          {% render_field form.username class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[45px]" placeholder="Username" autocomplete="off" %}
+          <i class='bx bxs-user absolute right-[20px] top-1/2 -translate-y-1/2 text-[20px]'></i>
+      </div>
+
+      <!-- Password -->
+      <div class="relative w-full h-[50px] my-[30px]">
+         {% render_field form.password class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[45px]" placeholder="Password" autocomplete="off" %}
+        <i class='bx bxs-lock-alt absolute right-[20px] top-1/2 -translate-y-1/2 text-[20px]'></i>
+      </div>
+
+      <!-- Remember / Forgot -->
+      <div class="flex justify-between text-[14.5px] mt-[-15px] mb-[15px]">
+        <label class="flex items-center">
+          <input type="checkbox" class="accent-white mr-1" />
+          Remember Me
+        </label>
+        <a href="#" class="text-white no-underline hover:underline">
+          Forgot Password
+        </a>
+      </div>
+
+      <!-- Button -->
+      <button
+        type="submit"
+        class="w-full h-[45px] bg-white text-[#333] font-semibold text-[16px] rounded-[40px] shadow-[0_0_10px_rgba(0,0,0,0.1)] cursor-pointer"
+      >
+        Login
+      </button>
+
+      <!-- Register link -->
+      <div class="text-center text-[14.5px] mt-5 mb-[15px]">
+        <p>
+          Dont have an account?
+          <a href="{% url 'customersignup' %}" class="text-white font-semibold no-underline hover:underline">
+            Register
+          </a>
+        </p>
+      </div>
+    </form>
+  </div>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

@@ -1,0 +1,180 @@
+<html>
+{% load static %}
+{% block content %}
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<title>Greenlite Shop</title>
+
+<style>
+  /* NAVBAR WRAPPER */
+  .foodied-navbar{
+    background:#eff6e0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5000;    
+    width: 100%;
+    overflow: visible; 
+  }
+
+  /* GREEN CURVE AREA */
+  .green-area{
+    background:#66A3FF;
+    border-radius: 120px 20px 20px 120px;
+    padding: 14px 25px;
+  }
+
+  /* BRAND - Increased Size and Weight */
+  .brand{
+    font-weight: 900; /* Bolder */
+    font-size: 26px;  /* Larger */
+    letter-spacing: 1.5px;
+  }
+
+  /* NAV LINKS - Increased Size and Weight */
+  .nav-link{
+    font-weight: 900 !important; /* Extremely Bold */
+    font-size: 18px !important;   /* Larger Text */
+    color: #eff6e0 !important;
+    background: #66A3FF;
+    margin: 0 12px;
+  }
+  
+  .nav-link.active{
+    color:#7DB343 !important;
+  }
+
+  .nav .nav-link {
+    color: #ffffff;
+    padding: 10px 20px; /* Slightly more padding for the larger text */
+    border-radius: 20px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .nav .nav-link:hover,
+  .nav .nav-link:focus {
+    background-color: #4ae867;
+  }
+
+  .search_bold{
+    font-weight: 900; /* Bolder search text */
+    font-size: 16px;
+  }
+
+  .item-number {
+    border-radius: 3px;
+    background-color: rgb(207 37 37 / 92%);
+    height: 22px;
+    padding: 3px 8px;
+    font-weight: 700;
+    display: inline-block;
+    color: #fff;
+    position: relative;
+    top: -10px;
+    right: 8px;
+  }
+
+  .item-number:empty:after{
+    content:"0"
+  }
+
+  /* Dropdown Fix */
+  .dropdown{
+    position: relative;
+    z-index: 6000;
+  }
+  .dropdown-menu{
+    z-index: 9999 !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  }
+  
+  /* Dropdown Items also made bolder */
+  .dropdown-item {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  /* PERFECT CIRCLE AVATAR */
+  .btn-circle{
+    width:45px;
+    height:45px;
+    border-radius: 50% !important;
+    padding: 0;
+    overflow: hidden; 
+    border: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .avatar-img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+</style>
+</head>
+
+<body>
+<nav class="foodied-navbar py-2">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center">
+      <div class="col-lg-2 col-md-3 col-6">
+        <span class="brand"><img src="{% static 'images/logo-nav1.png' %}" alt="" style="width: 70px; height: auto;"></span>
+      </div>
+
+      <div class="col-lg-10 col-md-9 col-6">
+        <div class="green-area d-flex align-items-center justify-content-between">
+          <ul class="nav mx-auto d-none d-lg-flex" id="mainMenu">
+              <li class="nav-item"><a class="nav-link menu-link" href="#">Home</a></li>
+              <li class="nav-item"><a class="nav-link menu-link" href="#">Package</a></li>
+              <li class="nav-item"><a class="nav-link menu-link" href="#">Cabin Booking</a></li>
+              <li class="nav-item"><a class="nav-link menu-link" href="{% url 'contactus' %}">Contact</a></li>
+          </ul>
+
+          <div class="d-flex align-items-center">
+            <form action="/search" method="get" style="margin-bottom:0;">
+              <div class="input-group">
+                <input type="text" class="form-control" style="font-weight: bold;" placeholder="Search..." name="query" id="query" value="{% if search_text %}{{ search_text }}{% endif %}">
+                <button class="btn btn-primary" type="submit">
+                  <div class="search_bold">search</div>
+                </button>
+              </div>
+            </form>
+            
+            <div class="cart1 px-3"> 
+                <a class="cart-button" href="/cart" style="text-decoration:none;"> 
+                  <svg width="20" height="20" viewBox="0 0 16 16">
+                    <path d="M15.32 2.405H4.887C3 2.405 2.46.805 2.46.805L2.257.21C2.208.085 2.083 0 1.946 0H.336C.1 0-.064.24.024.46l.644 1.945L3.11 9.767c.047.137.175.23.32.23h8.418l-.493 1.958H3.768l.002.003c-.017 0-.033-.003-.05-.003-1.06 0-1.92.86-1.92 1.92s.86 1.92 1.92 1.92c.99 0 1.805-.75 1.91-1.712l5.55.076c.12.922.91 1.636 1.867 1.636 1.04 0 1.885-.844 1.885-1.885 0-.866-.584-1.593-1.38-1.814l2.423-8.832c.12-.433-.206-.86-.655-.86 " fill="#fff"></path>
+                  </svg>
+                  <span class="item-number">{{ product_count_in_cart }}</span> 
+                </a> 
+            </div>
+
+            <div class="dropdown">
+              <button class="btn btn-light btn-circle dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" data-toggle="dropdown" aria-expanded="false">
+                  <img src="{{ customer.profile_picture.url }}" alt="Avatar" class="avatar-img">
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="/my-profile" style="font-weight: bold;">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'my-order' %}" style="font-weight: bold;">My Orders</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/logout" style="font-weight: bold;">Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+</body>
+</html>
+{% endblock content %}

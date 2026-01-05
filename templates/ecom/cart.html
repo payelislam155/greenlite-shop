@@ -1,0 +1,123 @@
+{% extends 'ecom/customer_base.html' %}
+{% load static %}
+{% block content %}
+
+{% if redirect_to %}
+<script>
+  location.replace("{{redirect_to}}")
+</script>
+{% endif %}
+
+<style media="screen">
+  /* Space for fixed navbar */
+  .cart-page-wrapper {
+    margin-top: 120px;
+    margin-bottom: 100px;
+  }
+
+  .panel-success {
+    border-color: #66A3FF;
+  }
+
+  .panel-success > .panel-heading {
+    color: #ffffff;
+    background-color: #66A3FF;
+    border-color: #66A3FF;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 15px;
+  }
+
+  .table img {
+    border-radius: 5px;
+    object-fit: cover;
+  }
+
+  .purchase-section {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .btn-total {
+    background-color: #3E454C;
+    color: white;
+    font-size: 20px;
+    padding: 10px 25px;
+    border: none;
+    cursor: default;
+  }
+
+  .btn-purchase {
+    background-color: #4cd964;
+    color: white;
+    font-size: 20px;
+    padding: 10px 40px;
+    border: none;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .btn-purchase:hover {
+    background-color: #eb6025;
+    color: white;
+  }
+</style>
+
+<div class="container cart-page-wrapper">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title text-center">My Shopping Cart</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered" id="dev-table">
+        <thead class="bg-light">
+          <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+            {% if p %}
+            <tr>
+              <td><strong>{{p.name}}</strong></td>
+              <td><img src="{% static p.product_image.url %}" alt="Product" height="60px" width="60px" /></td>
+              <td>৳ {{p.price}}</td>
+              <td>{{p.description|truncatewords:10}}</td>
+              <td class="text-center">
+                <a class="btn btn-danger btn-sm" href="{% url 'remove-from-cart' p.id %}?next_page={{request.path}}">
+                  <i class="fa fa-trash"></i> Remove
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">
+                <h3>Your cart is empty</h3>
+                <a href="/" class="btn btn-primary">Continue Shopping</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if products %}
+  <div class="purchase-section">
+    <button class="btn btn-total">Total: ৳ {{total}}</button>
+    <a href="/customer-address" class="btn btn-purchase">
+      <span>Purchase <i class="fa fa-arrow-right"></i></span>
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <title>Greenlite Shop</title>
+
+  <style>
+    /* Push carousel below navbar if needed */
+    .carousel {
+      margin-top: 70px;
+    }
+
+    /* Smooth left-right slide animation */
+    .carousel-item {
+      transition: transform 1s ease-in-out;
+    }
+
+    /* ✅ FULL IMAGE DISPLAY (NO CROP) */
+    .carousel-item img {
+      height: 500px;
+      width: 100%;
+      object-fit: contain;     /* ← only change */
+      background-color: #f7f7f7;
+    }
+
+    /* Optional overlay for better look */
+    .carousel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.05),
+        rgba(0,0,0,0.25)
+      );
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="carouselExampleIndicators"
+     class="carousel slide"
+     data-bs-ride="carousel"
+     data-bs-interval="3000"
+     data-bs-wrap="true"
+     data-bs-pause="false">
+
+  <!-- Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"></button>
+  </div>
+
+  <!-- Slides -->
+  <div class="carousel-inner position-relative">
+
+    <div class="carousel-item active">
+      <div class="carousel-overlay"></div>
+      <img src="{% static 'images/banner10.jpg' %}" class="d-block w-100" alt="Slide 1">
+    </div>
+
+    <div class="carousel-item">
+      <div class="carousel-overlay"></div>
+      <img src="{% static 'images/banner11.jpg' %}" class="d-block w-100" alt="Slide 2">
+    </div>
+
+    <div class="carousel-item">
+      <div class="carousel-overlay"></div>
+      <img src="{% static 'images/banner12.jpg' %}" class="d-block w-100" alt="Slide 3">
+    </div>
+
+    <div class="carousel-item">
+      <div class="carousel-overlay"></div>
+      <img src="{% static 'images/banner13.jpg' %}" class="d-block w-100" alt="Slide 4">
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+
+  <button class="carousel-control-next" type="button"
+          data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

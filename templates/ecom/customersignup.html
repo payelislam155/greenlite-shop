@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple E-commerce - Sign Up</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <!-- Nunito font (optional, if you want same as design) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Boxicons (only if you want to use icons like login) -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+      body { font-family: "Nunito", sans-serif; }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex items-center justify-center bg-cover bg-center mt-2 mb-6"
+    style="background-image: url('{% static "images/bg9.jpg" %}')"
+  >
+    <div class="w-[460px] bg-transparent border-2 border-white/40 backdrop-blur-[11px] text-white rounded-[12px] px-10 py-8">
+      <form method="post" enctype="multipart/form-data" class="w-full">
+        {% csrf_token %}
+
+        <h1 class="text-[30px] md:text-[34px] text-center mb-2 font-semibold">
+          Sign Up
+        </h1>
+        <p class="text-center text-sm mb-4 text-white/80">
+          Create your account to start shopping.
+        </p>
+
+        <!-- First Name -->
+        <div class="relative w-full h-[50px] my-[15px]">
+          {% render_field userForm.first_name class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[20px]" placeholder="First Name" autocomplete="off" %}
+        </div>
+
+        <!-- Last Name -->
+        <div class="relative w-full h-[50px] my-[15px]">
+          {% render_field userForm.last_name class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[20px]" placeholder="Last Name" autocomplete="off" %}
+        </div>
+
+        <!-- Username -->
+        <div class="relative w-full h-[50px] my-[15px]">
+          {% render_field userForm.username class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[45px]" placeholder="Username" autocomplete="off" %}
+          <i class='bx bxs-user absolute right-[20px] top-1/2 -translate-y-1/2 text-[20px]'></i>
+        </div>
+
+        <!-- Password -->
+        <div class="relative w-full h-[50px] my-[15px]">
+          {% render_field userForm.password class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[45px]" placeholder="Password" autocomplete="off" %}
+          <i class='bx bxs-lock-alt absolute right-[20px] top-1/2 -translate-y-1/2 text-[20px]'></i>
+        </div>
+
+        <!-- Address -->
+        <div class="relative w-full my-[15px]">
+          {% render_field customerForm.address class="w-full bg-transparent border-2 border-white/20 rounded-[20px] outline-none text-[16px] text-white placeholder:text-white px-[20px] py-[12px]" placeholder="Address" rows="2" %}
+        </div>
+
+        <!-- Mobile -->
+        <div class="relative w-full h-[50px] my-[15px]">
+          {% render_field customerForm.mobile class="w-full h-full bg-transparent border-2 border-white/20 rounded-[40px] outline-none text-[16px] text-white placeholder:text-white px-[20px] pr-[20px]" placeholder="Contact Number" autocomplete="off" %}
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="w-full my-[15px] text-sm">
+          <label class="block mb-1 text-white/90">Profile Picture</label>
+          {% render_field customerForm.profile_pic class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white file:text-gray-800 hover:file:bg-gray-100" %}
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="mt-4 w-full h-[45px] bg-white text-[#333] font-semibold text-[16px] rounded-[40px] shadow-[0_0_10px_rgba(0,0,0,0.1)] cursor-pointer hover:bg-gray-100 transition"
+        >
+          Create Account
+        </button>
+
+        <!-- Already have account -->
+        <div class="text-center text-[14.5px] mt-5 mb-[5px]">
+          <p>
+            Already have an account?
+            <a href="/customerlogin" class="text-white font-semibold no-underline hover:underline">
+              Login
+            </a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

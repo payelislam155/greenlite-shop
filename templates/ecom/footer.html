@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+/* Custom Footer Styling */
+.gl-footer {
+  background: #eff6e0;
+  color: #000000;
+  padding: 48px 18px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  border-top: 1px solid #eee;
+  position: relative; /* ✅ REQUIRED */
+  overflow: hidden;   /* ✅ REQUIRED */
+}
+
+.gl-inner {
+  max-width: 1100px;
+  position: relative;
+  z-index: 2;
+}
+
+.logo_line{
+  position: relative;
+  top: -45px;
+  right: 40px;
+}
+
+.img-line{
+  position: relative;
+  left: -40px;
+  top: 25px;
+}
+
+.text-line strong{
+  color: #080f0f;
+  font-weight:bold;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.gl-footer a {
+  color: #444;
+  text-decoration: none;
+  font-size: 0.9rem;
+  line-height: 2;
+}
+
+.contact-info li {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* Social Icons */
+.social-icon {
+  background-color: #ff9900;
+  color: white !important;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.social-line{
+  position: relative;
+  top: 10px;
+  left: -40px;
+}
+
+/* Reserved */
+.reserved {
+  background-color: #758bfd;
+  padding: 4px 0px;
+  font-size: 10px;
+  border-top: 1px solid #ccc;
+}
+.reserved p{
+  margin: 0;
+  color: white;
+  font-weight: bold;
+}
+
+/* ===== BUBBLES ===== */
+.bubbles {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5rem;
+  background: #758bfd;
+  filter: url("#blob");
+  z-index: 1;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -4rem; /* ✅ REQUIRED */
+  left: var(--position);
+  background: #758bfd;
+  border-radius: 50%;
+  animation:
+    bubble-size var(--time) ease-in infinite var(--delay),
+    bubble-move var(--time) ease-in infinite var(--delay);
+  transform: translateX(-50%);
+}
+
+@keyframes bubble-size {
+  0%, 75% {
+    width: var(--size);
+    height: var(--size);
+  }
+  100% {
+    width: 0;
+    height: 0;
+  }
+}
+
+@keyframes bubble-move {
+  0% { bottom: -4rem; }
+  100% { bottom: var(--distance); }
+}
+  </style>
+</head>
+
+<body>
+
+<footer class="gl-footer">
+  <div class="bubbles" id="bubbles"></div>
+      <div class="container gl-inner">
+        <div class="row">
+          <div class="col-md-3 col-sm-6 mb-4 logo_line">
+            <div class=" col-12">
+                <img class="img-line" style="height: 100px;" src="{% static 'images/logo-nav2.png' %}" alt="greenlite_shop" style="height: 50px;">
+              </div>
+              <div class="text-line">
+                <strong>Your one-stop shop for eco-friendly products that make a difference. Join us in creating a sustainable future, one purchase at a time.</strong>
+              </div>
+          </div>
+
+          <div class="col-md-2 col-sm-6 mb-4">
+            <h6 class="footer-title">Home</h6>
+            <ul class="list-unstyled">
+              <li><a href="#">Home</a></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Tour Packages</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-2 col-sm-6 mb-4">
+            <h6 class="footer-title">Service</h6>
+            <ul class="list-unstyled">
+                <li><a href="#">Bike and Rickshaw rental</a></li>
+                <li><a href="#">Guided Tours of Lucca</a></li>
+                <li><a href="#">Guided Bike Tour of Lucca</a></li>
+                <li><a href="#">Trip In The Tuscan Hills</a></li>
+                <li><a href="#">Transportation With Luxury Cars</a></li>
+                <li><a href="#">Wine Tours By Bus With Guide</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-4">
+            <h6 class="footer-title">Contacts</h6>
+            <ul class="list-unstyled contact-info">
+              <li><i class="bi bi-geo-alt-fill me-2"></i> Piazza Napoleone, Lucca, Tuscany</li>
+              <li><i class="bi bi-telephone-fill me-2"></i> +25 365 985 254</li>
+              <li><i class="bi bi-envelope-fill me-2"></i> italiainlimo@gmail.com</li>
+            </ul>
+          </div>
+
+          <div class="social-img col-md-2 col-sm-6 mb-4">
+            <h6 class="footer-title">Social Media</h6>
+            <div class="d-flex gap-2 position-relative" style="left: -20px;">
+              <a href="#" class="social-icon"><i class="fa fa-facebook"></i></a>
+              <a href="#" class="social-icon"><i class="fa fa-twitter"></i></a>
+              <a href="#" class="social-icon"><i class="fa fa-instagram"></i></a>
+            </div>
+            <div class="social-line">
+                <img src="{% static 'images/social-img.png' %}" alt="greenlite_shop" style="height: 50px;">
+            </div>
+          </div>
+        </div>
+      </div>
+</footer>
+
+<svg style="position:fixed; top:100vh">
+  <defs>
+    <filter id="blob">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" mode="matrix"
+        values="1 0 0 0 0  
+                0 1 0 0 0  
+                0 0 1 0 0  
+                0 0 0 19 -9"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="reserved text-center">
+  <p>&copy; 2026 greenlite shop.com. All rights reserved.</p>
+</div>
+
+<script>
+const bubbles = document.getElementById("bubbles");
+for (let i = 0; i < 128; i++) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  bubble.style.setProperty("--size", `${2 + Math.random() * 4}rem`);
+  bubble.style.setProperty("--distance", `${6 + Math.random() * 4}rem`);
+  bubble.style.setProperty("--position", `${Math.random() * 100}%`);
+  bubble.style.setProperty("--time", `${2 + Math.random() * 2}s`);
+  bubble.style.setProperty("--delay", `${-Math.random() * 4}s`);
+
+  bubbles.appendChild(bubble);
+}
+</script>
+
+</body>
+</html>
