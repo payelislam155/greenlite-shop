@@ -18,8 +18,8 @@ class CustomerForm(forms.ModelForm):
 
 class ProductForm(forms.ModelForm):
     class Meta:
-        model=models.Product
-        fields=['name','price','description','product_image']
+        model = models.Product
+        fields = ['name', 'price', 'description', 'product_image', 'category'] # Added category
 
 #address of shipment
 class AddressForm(forms.Form):
@@ -53,4 +53,3 @@ class CabinBookingForm(forms.ModelForm):
         widgets = {
             'booking_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
-

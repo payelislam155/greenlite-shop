@@ -68,6 +68,7 @@
         }
         .category-row-mobile::-webkit-scrollbar { display: none; }
         .cat-icon-link { margin-bottom: 0; flex: 0 0 auto; min-width: 130px; justify-content: center; }
+    
     }
 </style>
 
@@ -75,23 +76,51 @@
     <div class="row">
         <div class="col-lg-3">
             <div class="filter-sidebar">
-                <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-th-large me-2 text-primary"></i>Categories</h5>
-                
-                <div class="category-row-mobile mb-4">
-                    <a href="{% url 'package' %}" class="cat-icon-link {% if not current_category %}active{% endif %}">
-                        <i class="fas fa-border-all"></i> <span>All Items</span>
-                    </a>
-                    <a href="{% url 'package' %}?category=Package" class="cat-icon-link {% if current_category == 'Package' %}active{% endif %}">
-                        <i class="fas fa-box-open"></i> <span>Package</span>
-                    </a>
-                    <a href="{% url 'package' %}?category=Standard" class="cat-icon-link {% if current_category == 'Standard' %}active{% endif %}">
-                        <i class="fas fa-star"></i> <span>Standard</span>
-                    </a>
-                    <a href="{% url 'package' %}?category=Premium" class="cat-icon-link {% if current_category == 'Premium' %}active{% endif %}">
-                        <i class="fas fa-crown"></i> <span>Premium</span>
-                    </a>
-                </div>
+            <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-th-large me-2 text-primary"></i>Categories</h5>
 
+            <div class="category-row-mobile mb-4">
+                <a href="{% url 'package' %}" class="cat-icon-link {% if not current_category or current_category == 'All' %}active{% endif %}">
+                    <i class="fas fa-border-all"></i> <span>All Items</span>
+                </a>
+                
+                <a href="{% url 'package' %}?category=Fashion" class="cat-icon-link {% if current_category == 'Fashion' %}active{% endif %}">
+                    <i class="fas fa-tshirt"></i> <span>Fashion</span>
+                </a>
+                <a href="{% url 'package' %}?category=Bags and Travel" class="cat-icon-link {% if current_category == 'Bags and Travel' %}active{% endif %}">
+                    <i class="fas fa-suitcase"></i> <span>Bags & Travel</span>
+                </a>
+                <a href="{% url 'package' %}?category=Medicine" class="cat-icon-link {% if current_category == 'Medicine' %}active{% endif %}">
+                    <i class="fas fa-pills"></i> <span>Medicine</span>
+                </a>
+                <a href="{% url 'package' %}?category=mobiles" class="cat-icon-link {% if current_category == 'mobiles' %}active{% endif %}">
+                    <i class="fas fa-mobile-alt"></i> <span>Mobiles</span>
+                </a>
+                <a href="{% url 'package' %}?category=Books" class="cat-icon-link {% if current_category == 'Books' %}active{% endif %}">
+                    <i class="fas fa-book"></i> <span>Books</span>
+                </a>
+                <a href="{% url 'package' %}?category=Food" class="cat-icon-link {% if current_category == 'Food' %}active{% endif %}">
+                    <i class="fas fa-utensils"></i> <span>Food</span>
+                </a>
+                <a href="{% url 'package' %}?category=Watch" class="cat-icon-link {% if current_category == 'Watch' %}active{% endif %}">
+                    <i class="fas fa-stopwatch"></i> <span>Watch</span>
+                </a>
+                <a href="{% url 'package' %}?category=Groceries" class="cat-icon-link {% if current_category == 'Groceries' %}active{% endif %}">
+                    <i class="fas fa-shopping-basket"></i> <span>Groceries</span>
+                </a>
+                <a href="{% url 'package' %}?category=Furniture & Décor" class="cat-icon-link {% if current_category == 'Furniture & Décor' %}active{% endif %}">
+                    <i class="fas fa-couch"></i> <span>Furniture</span>
+                </a>
+                <a href="{% url 'package' %}?category=Woman Dress" class="cat-icon-link {% if current_category == 'Woman Dress' %}active{% endif %}">
+                    <i class="fas fa-female"></i> <span>Woman Dress</span>
+                </a>
+                <a href="{% url 'package' %}?category=Kitchen Utensils" class="cat-icon-link {% if current_category == 'Kitchen Utensils' %}active{% endif %}">
+                    <i class="fas fa-blender"></i> <span>Kitchen</span>
+                </a>
+                <a href="{% url 'package' %}?category=Electronics" class="cat-icon-link {% if current_category == 'Electronics' %}active{% endif %}">
+                    <i class="fas fa-blender"></i> <span>Electronics</span>
+                </a>
+                
+            </div>
                 <hr class="my-4">
 
                 <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-filter me-2 text-primary"></i>Refine Settings</h5>

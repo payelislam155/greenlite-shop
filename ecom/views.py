@@ -46,9 +46,16 @@ def home_view(request):
 #for showing login button for admin(by sumit)
 def adminclick_view(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('afterlogin')
+        return HttpResponseRedirect('admin-dashboard')
     return HttpResponseRedirect('adminlogin')
 
+
+
+# Redirecting to adminlogin so they see the login form immediately after logout
+def admin_logout(request):
+    logout(request)
+    # Redirect back to admin login so they can sign in again immediately
+    return redirect('adminlogin')
 
 def customer_signup_view(request):
     userForm=forms.CustomerUserForm()
@@ -227,14 +234,29 @@ def view_feedback_view(request):
 #------------------------ PUBLIC CUSTOMER RELATED VIEWS START ---------------------
 #---------------------------------------------------------------------------------
 def search_view(request):
-    # Get the search query
+    # Get the search query and category from the URL
     query = request.GET.get('query', '')
-    products = models.Product.objects.all().filter(name__icontains=query)
+    category = request.GET.get('category', '')
     
-    # Initialize default values for the sidebar to prevent errors in package.html
-    current_category = request.GET.get('category', '')
-    current_sort = request.GET.get('sort', '')
-    max_price = request.GET.get('max_price', 10000)
+    # Base queryset
+    products = models.Product.objects.all()
+    
+    # Filter by search text if exists
+    if query:
+        products = products.filter(name__icontains=query)
+    
+    # Filter by Category if selected (This is the key fix)
+    if category and category != "All":
+        products = products.filter(category=category)
+    
+    # Sorting logic
+    sort = request.GET.get('sort')
+    if sort == 'price_low':
+        products = products.order_by('price')
+    elif sort == 'price_high':
+        products = products.order_by('-price')
+    elif sort == 'name':
+        products = products.order_by('name')
 
     # Cart counter logic
     if 'product_ids' in request.COOKIES:
@@ -244,20 +266,20 @@ def search_view(request):
     else:
         product_count_in_cart = 0
 
-    # word variable for heading
-    word = "Search Results for: " + query if query else "All Products"
+    # Max price for the slider default
+    max_price = request.GET.get('max_price', 10000)
+    if max_price:
+        products = products.filter(price__lte=max_price)
 
-    # We now point ALWAYS to package.html to use the premium layout
     return render(request, 'ecom/package.html', {
         'products': products,
-        'word': word,
+        'word': category if category else "All Collection",
         'product_count_in_cart': product_count_in_cart,
         'search_text': query,
-        'current_category': current_category,
-        'current_sort': current_sort,
+        'current_category': category,
+        'current_sort': sort,
         'max_price': max_price
     })
-    
     
     
 
@@ -777,22 +799,21 @@ def cart_view(request):
 
 
 # ecom/views.py
-
 def package_view(request):
-    # Start with all products
+    # Base query
     products = models.Product.objects.all()
     
-    # 1. Handle Category Filtering
+    # 1. CATEGORY FILTER
     category = request.GET.get('category')
     if category:
         products = products.filter(category=category)
     
-    # 2. Handle Price Filtering
+    # 2. PRICE FILTER
     max_price = request.GET.get('max_price')
     if max_price:
         products = products.filter(price__lte=max_price)
-
-    # 3. Handle Sorting
+        
+    # 3. SORTING
     sort = request.GET.get('sort')
     if sort == 'price_low':
         products = products.order_by('price')
@@ -801,7 +822,7 @@ def package_view(request):
     elif sort == 'name':
         products = products.order_by('name')
 
-    # Cart Count logic
+    # Cart counter (Cookie logic)
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
         counter = product_ids.split('|')
@@ -815,5 +836,8 @@ def package_view(request):
         'current_category': category,
         'current_sort': sort,
         'max_price': max_price,
-        'word': category if category else "All Items"
+        'word': category if category else "All Collection"
     })
+    
+    
+    

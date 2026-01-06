@@ -13,18 +13,26 @@ class Customer(models.Model):
         return self.user.first_name
 
 class Product(models.Model):
-    # Added Category Choices
     CAT_CHOICES = (
-        ('Package', 'Package'),
-        ('Standard', 'Standard'),
-        ('Premium', 'Premium'),
+        ('Fashion', 'Fashion'),
+        ('Bags and Travel', 'Bags and Travel'),
+        ('Medicine', 'Medicine'),
+        ('Mobiles', 'Mobiles'),
+        ('Books', 'Books'),
+        ('Food', 'Food'),
+        ('Watch','Watch'),
+        ('Groceries','Groceries'),
+        ('Furniture & Décor','Furniture & Décor'),
+        ('Woman Dress','Woman Dress'),
+        ('Kitchen Utensils','Kitchen Utensils'),
+        ('Electronics','Electronics'),
     )
-    name=models.CharField(max_length=40)
-    product_image= models.ImageField(upload_to='product_image/',null=True,blank=True)
+    name = models.CharField(max_length=40)
+    product_image = models.ImageField(upload_to='product_image/', null=True, blank=True)
     price = models.PositiveIntegerField()
-    description=models.CharField(max_length=40)
-    category = models.CharField(max_length=20, choices=CAT_CHOICES, default='Package') # Added this
-
+    description = models.CharField(max_length=40)
+    category = models.CharField(max_length=50, choices=CAT_CHOICES, default='Fashion')
+    
     def __str__(self):
         return self.name
     
@@ -42,9 +50,10 @@ class Orders(models.Model):
     STATUS =(
         ('Pending','Pending'),
         ('Order Confirmed','Order Confirmed'),
-        ('Out for Delivery','Out for Delivery'),
+        ('On the Way','On the Way'), 
         ('Delivered','Delivered'),
     )
+    
     customer=models.ForeignKey('Customer', on_delete=models.CASCADE,null=True)
     product=models.ForeignKey('Product',on_delete=models.CASCADE,null=True)
     email = models.CharField(max_length=50,null=True)
