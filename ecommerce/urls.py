@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path
 from ecom import views
 from django.contrib.auth.views import LoginView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -40,7 +42,7 @@ urlpatterns = [
     path('delete-order/<int:pk>', views.delete_order_view,name='delete-order'),
     path('update-order/<int:pk>', views.update_order_view,name='update-order'),
 
-
+    path('', views.home_view, name='home'), # This is the name you should use
     path('customersignup', views.customer_signup_view, name='customersignup'),
     path('customerlogin', LoginView.as_view(template_name='ecom/customerlogin.html'),name='customerlogin'),
     path('customer-home', views.customer_home_view,name='customer-home'),
@@ -69,5 +71,6 @@ urlpatterns = [
     
     path('package', views.search_view, name='package'),
    
-
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

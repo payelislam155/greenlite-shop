@@ -1,48 +1,182 @@
 {% extends 'ecom/customer_base.html' %}
 {% block content %}
-<div class="container" style="margin-top: 100px; margin-bottom: 50px;">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card shadow-lg border-0" style="border-radius: 15px;">
-                <div class="card-header text-white text-center py-4" style="background: #2e7d32; border-radius: 15px 15px 0 0;">
-                    <h2 class="mb-0"><b><i class="fas fa-ship"></i> Cabin Reservation</b></h2>
+
+<style>
+    body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .header-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 30px 0; border-radius: 0 0 20px 20px; }
+    .time-card { border: none; border-radius: 15px; transition: transform 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .time-card:hover { transform: translateY(-5px); }
+    .morning { border-left: 5px solid #ff9800; }
+    .noon { border-left: 5px solid #2196f3; }
+    .evening { border-left: 5px solid #9c27b0; }
+    .night { border-left: 5px solid #2c3e50; }
+    .badge-new { background-color: #e91e63; color: white; }
+    .info-box { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 8px; }
+
+    /* নতুন যুক্ত করা ব্যাকগ্রাউন্ড স্টাইল */
+    .booking-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/greenline.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 80px 0;
+        margin-top: 50px;
+        border-radius: 20px;
+    }
+    .booking-card {
+        background: rgba(255, 255, 255, 0.95); /* হালকা স্বচ্ছ সাদা ব্যাকগ্রাউন্ড */
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+    }
+</style>
+
+<div class="container mb-5">
+    <div class="header-section text-center mb-4">
+        <h2>🚢 ঢাকা ⇌ ভোলা লঞ্চ সময়সূচী</h2>
+        <p>নিরাপদ ও আরামদায়ক ভ্রমণের জন্য সর্বশেষ আপডেট দেখুন</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 time-card morning">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">☀️ সকাল</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">গ্রিনলাইন-৩ <span>০৮:৩০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">কর্ণফুলী-১৪ <span>০৯:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">মিতালী-৭ <span>০৮:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">দোয়েল পাখি-১০ <span>০৭:৩০</span></li>
+                    </ul>
                 </div>
-                <div class="card-body p-5 bg-light">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="fw-bold"><i class="fas fa-map-marker-alt text-success"></i> From (Source)</label>
-                                <input type="text" name="source" class="form-control" placeholder="Dhaka" required>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 time-card noon">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">🕛 দুপুর</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">ফারহান-৯ <span>১১:৪৫</span></li>
+                        <li class="list-group-item d-flex justify-content-between">যুবরাজ-৭ <span>১২:৩০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">নূরজাহান <span>০১:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">আল ওয়ালিদ-৪ <span>০২:০০</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 time-card evening">
+                <div class="card-body">
+                    <h5 class="card-title text-purple" style="color: #9c27b0;">🌆 বিকাল</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">সুরভী-৮ <span>০২:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">সম্পদ <span>০৪:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">কর্ণফুলী-৩ <span>০৪:০০</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 time-card night">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">🌙 রাত</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">রাজারহাট-বি <span>১০:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">কর্ণফুলী-১১ <span>১০:০০</span></li>
+                        <li class="list-group-item d-flex justify-content-between">আসা যাওয়া-২ <span>১১:০০</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 p-3 bg-white rounded shadow-sm border">
+        <h5 class="text-danger border-bottom pb-2">✨ নতুন যুক্ত ও দ্রুতগামী</h5>
+        <div class="row pt-2">
+            <div class="col-md-6">
+                <strong>আব এ জম জম:</strong> ৫-৬ ঘণ্টা (দ্রুতগামী)
+            </div>
+            <div class="col-md-6 text-md-end">
+                <strong>তরঙ্গ-৭:</strong> নিয়মিত চলাচল
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 table-responsive">
+        <table class="table table-bordered bg-white shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>ভাড়ার ধরণ</th>
+                    <th>আনুমানিক মূল্য (টাকা)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>ডেক (সাধারণ)</td><td>৳ ৪০০</td></tr>
+                <tr><td>সিঙ্গেল কেবিন</td><td>৳ ১০০০+</td></tr>
+                <tr><td>ডাবল কেবিন</td><td>৳ ২৪০০+</td></tr>
+                <tr><td>ভিআইপি কেবিন</td><td>৳ ৪০০০+</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-box mt-4">
+        <strong>⚠️ গুরুত্বপূর্ণ তথ্য:</strong>
+        <ul class="mb-0">
+            <li>আবহাওয়া বা ঘন কুয়াশার কারণে সময় পরিবর্তন হতে পারে।</li>
+            <li>সর্বশেষ আপডেটের জন্য সদরঘাট তথ্যকেন্দ্র বা লঞ্চের ফেসবুক পেজে যোগাযোগ করুন।</li>
+        </ul>
+    </div>
+</div>
+
+<div class="container-fluid booking-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card shadow-lg border-0 booking-card">
+                    <div class="card-header text-white text-center py-4" style="background: rgba(46, 125, 50, 0.9); border-radius: 15px 15px 0 0;">
+                        <h2 class="mb-0"><b><i class="fas fa-ship"></i> Cabin Reservation</b></h2>
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="fw-bold"><i class="fas fa-map-marker-alt text-success"></i> From (Source)</label>
+                                    <input type="text" name="source" class="form-control" placeholder="Dhaka" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold"><i class="fas fa-location-arrow text-danger"></i> To (Destination)</label>
+                                    <input type="text" name="destination" class="form-control" placeholder="Bhola" required>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="fw-bold"><i class="fas fa-location-arrow text-danger"></i> To (Destination)</label>
-                                <input type="text" name="destination" class="form-control" placeholder="Barishal" required>
+                            <div class="mb-3">
+                                <label class="fw-bold">Cabin Category</label>
+                                <select name="cabin_type" class="form-select" required>
+                                    <option value="VIP Double">VIP Double</option>
+                                    <option value="Semi-VIP">Semi-VIP</option>
+                                    <option value="Single Deluxe">Single Deluxe</option>
+                                    <option value="Single Regular">Single Regular</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Cabin Category</label>
-                            <select name="cabin_type" class="form-control" required>
-                                <option value="VIP Double">VIP Double</option>
-                                <option value="Semi-VIP">Semi-VIP</option>
-                                <option value="Single Deluxe">Single Deluxe</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Journey Date</label>
-                            <input type="date" name="booking_date" class="form-control" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="fw-bold">Instructions for Admin</label>
-                            <textarea name="message" class="form-control" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-3 shadow" style="font-weight: 800;">
-                            SUBMIT BOOKING REQUEST
-                        </button>
-                    </form>
+                            <div class="mb-3">
+                                <label class="fw-bold">Journey Date</label>
+                                <input type="date" name="booking_date" class="form-control" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="fw-bold">Instructions for Admin</label>
+                                <textarea name="message" class="form-control" rows="3" placeholder="অতিরিক্ত কোনো তথ্য থাকলে এখানে লিখুন..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 py-3 shadow" style="font-weight: 800; border-radius: 10px;">
+                                SUBMIT BOOKING REQUEST
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock content %}

@@ -2,92 +2,209 @@
 {% load static %}
 {% block content %}
 
-
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    body {
+        background-color: #f0f2f5;
     }
 
-    h6 {
-      text-align: center;
+    /* Modern Card Styling */
+    .inventory-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 50px;
     }
 
-    .row {
-      margin: 100px;
+    /* Table Enhancements */
+    .table {
+        margin-bottom: 0;
     }
 
-    .float{
-      position:fixed;
-      width:70px;
-      height:70px;
-      bottom:60px;
-      right:60px;
-      background-color:#428bca;
-      color:#FFF;
-      border-radius:50px;
-      text-align:center;
-      box-shadow: 5px 5px 5px #505050;
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #5e6e82;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+        border-bottom: 1px solid #edf2f9;
+        padding: 20px;
     }
 
-.my-float{
-	margin-top:22px;
-}
-.fa{
-  padding: 0em 0.5em;
-}
-  </style>
-</head>
-<!--
-written By : sumit kumar
-facebook : fb.com/sumit.luv
--->
+    .table tbody td {
+        padding: 20px;
+        vertical-align: middle;
+        border-top: 1px solid #edf2f9;
+        color: #4d5969;
+        font-size: 14px;
+    }
 
+    /* Image Wrapper */
+    .product-img-table {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 2px solid #fff;
+    }
 
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Total Products</h6>
+    /* Custom Badges */
+    .badge-soft-info {
+        background-color: #e0f2fe;
+        color: #0369a1;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .badge-price {
+        background-color: #dcfce7;
+        color: #15803d;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin: 0 4px;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-edit { background-color: #eff6ff; color: #2563eb; }
+    .btn-edit:hover { background-color: #2563eb; color: #fff; transform: translateY(-2px); }
+
+    .btn-delete { background-color: #fff1f2; color: #e11d48; }
+    .btn-delete:hover { background-color: #e11d48; color: #fff; transform: translateY(-2px); }
+
+    /* Floating Action Button */
+    .float-add {
+        position: fixed;
+        width: 65px;
+        height: 65px;
+        bottom: 40px;
+        right: 40px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #FFF;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        z-index: 1000;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .float-add:hover {
+        transform: scale(1.1) rotate(90deg);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 15px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .inventory-header h2 {
+        color: #1e293b;
+        letter-spacing: -0.5px;
+    }
+</style>
+
+<div class="container-fluid px-lg-5">
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-end mb-4 inventory-header">
+                <div>
+                    <h2 class="font-weight-bold">Store Inventory</h2>
+                    <p class="text-muted mb-0">Manage your product catalog and listings</p>
+                </div>
+                <div class="text-right">
+                    <span class="badge badge-pill badge-dark py-2 px-4 shadow-sm" style="font-size: 13px; border-radius: 10px;">
+                        <i class="fa fa-cubes mr-2"></i> {{ products.count }} Products
+                    </span>
+                </div>
+            </div>
+
+            <div class="inventory-card">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Short Info</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in products %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if p.product_image %}
+                                            <img src="{{ p.product_image.url }}" class="product-img-table mr-3" alt="{{ p.name }}">
+                                        {% else %}
+                                            <div class="product-img-table mr-3 d-flex align-items-center justify-content-center bg-light text-muted" style="border: 2px dashed #cbd5e1;">
+                                                <i class="fa fa-image"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="d-flex flex-column">
+                                            <span class="font-weight-bold text-dark" style="font-size: 15px;">{{ p.name }}</span>
+                                            <code class="small text-primary" style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; width: fit-content;">#{{ p.id }}</code>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge-soft-info">{{ p.category }}</span></td>
+                                <td><span class="badge-price">৳ {{ p.price }}</span></td>
+                                <td>
+                                    <span class="text-muted" title="{{ p.description }}">
+                                        {{ p.description|truncatewords:8 }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{% url 'update-product' p.id %}" class="btn-action btn-edit" title="Edit Product">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'delete-product' p.id %}" class="btn-action btn-delete" title="Delete Product">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="py-4">
+                                        <i class="fa fa-folder-open-o fa-3x text-light mb-3"></i>
+                                        <h4 class="text-muted">Your inventory is empty.</h4>
+                                        <p class="text-muted">Click the (+) button to add your first product.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-    <table class="table table-hover table-bordered" id="dev-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Price</th>
-          <th>Description</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      {% for p in products %}
-  {% if p %}
-
-      <tr>
-        <td> {{p.name}}</td>
-        <td> <img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{p.price}}</td>
-        <td>{{p.description}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-product' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a>
-          <a class="btn btn-danger btn-xs" href="{% url 'delete-product' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-
-      </tr>
-      {%else%}
-      <br><br><br>
-      <h1>No Products!!</h1>
-      {% endif %}
-      {% endfor %}
-    </table>
-  </div>
 </div>
-<!-- add product floating button -->
-<a href="/admin-add-product" class="float">
-<i class="fa fa-plus my-float"></i>
+
+<a href="/admin-add-product" class="float-add" title="Add New Product">
+    <i class="fa fa-plus"></i>
 </a>
-<!--
-developed By : sumit kumar
--->
+
 {% endblock content %}

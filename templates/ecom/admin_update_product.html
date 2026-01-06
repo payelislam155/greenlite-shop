@@ -1,89 +1,180 @@
-{% extends 'ecom/admin_base.html' %} {% load widget_tweaks %} {% block content %}
+{% extends 'ecom/admin_base.html' %} 
+{% load widget_tweaks %} 
+{% block content %}
 
-<head>
-    <style media="screen">
-        a:link {
-            text-decoration: none;
-        }
-        
-        .note {
-            text-align: center;
-            height: 80px;
-            background: #0F2027;
-            /* fallback for old browsers */
-            color: #fff;
-            font-weight: bold;
-            line-height: 80px;
-        }
-        
-        .form-content {
-            padding: 5%;
-            border: 1px solid #ced4da;
-            margin-bottom: 2%;
-        }
-        
-        .form-control {
-            border-radius: 1.5rem;
-        }
-        
-        .btnSubmit {
-            border: none;
-            border-radius: 1.5rem;
-            padding: 1%;
-            width: 20%;
-            cursor: pointer;
-            background: #005d94;
-            color: #fff;
-        }
-        
-        .menu {
-            top: 50px;
-        }
-    </style>
+<style>
+    :root {
+        --primary-green: #2ecc71;
+        --dark-bg: #1a1a1a;
+    }
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</head>
-<br><br><br><br><br><br>
-<!------ update page for doctor by admin(sumit)  ---------->
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="container register-form">
-        <div class="form">
-            <div class="note">
-                <p>Update Product Details</p>
+    .update-card {
+        background: #fff;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    .card-header-gradient {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .card-header-gradient h3 {
+        font-weight: 700;
+        margin-bottom: 5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .form-container {
+        padding: 40px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #344767;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.15);
+    }
+
+    /* Styling for the current image preview */
+    .current-img-wrapper {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 2px dashed #dee2e6;
+        border-radius: 15px;
+    }
+
+    .current-img-wrapper img {
+        max-height: 150px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-update {
+        background: var(--primary-green);
+        border: none;
+        color: white;
+        padding: 15px 50px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        box-shadow: 0 10px 20px rgba(46, 204, 113, 0.2);
+    }
+
+    .btn-update:hover {
+        background: #27ae60;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(46, 204, 113, 0.3);
+        color: white;
+    }
+
+    .btn-back {
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-back:hover {
+        color: var(--primary-green);
+    }
+</style>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="mb-4">
+                <a href="{% url 'admin-products' %}" class="btn-back">
+                    <i class="fa fa-arrow-left mr-2"></i> Back to Inventory
+                </a>
             </div>
-            <div class="form-content">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Product Name</label> {% render_field productForm.name class="form-control" placeholder="Product Name" %}
-                        </div>
-                        <div class="form-group">
-                            <label for="">Product Description</label> {% render_field productForm.description class="form-control" placeholder="Description" %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Product Price</label> {% render_field productForm.price class="form-control" placeholder="Price" %}
-                        </div>
-                        <div class="form-group">
-                            {% render_field productForm.product_image class="form-control" placeholder="product_image" %}
+
+            <div class="update-card animated fadeIn">
+                <div class="card-header-gradient">
+                    <h3>Update Product</h3>
+                    <p class="mb-0 opacity-7">Modify the details for your store item</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="form-container">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label><i class="fa fa-tag mr-2 text-success"></i>Product Name</label>
+                                {% render_field productForm.name class="form-control" placeholder="Enter product name" %}
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fa fa-align-left mr-2 text-success"></i>Product Description</label>
+                                {% render_field productForm.description class="form-control" rows="4" placeholder="Update description..." %}
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fa fa-money mr-2 text-success"></i>Product Price (৳)</label>
+                                {% render_field productForm.price class="form-control" placeholder="0.00" %}
+                            </div>
                         </div>
 
-
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label><i class="fa fa-image mr-2 text-success"></i>Current Product Image</label>
+                                <div class="current-img-wrapper">
+                                    {% if productForm.instance.product_image %}
+                                        <img src="{{ productForm.instance.product_image.url }}" alt="Current Image">
+                                        <p class="mt-2 mb-0 small text-muted">Current File</p>
+                                    {% else %}
+                                        <div class="py-4">
+                                            <i class="fa fa-image fa-3x text-light"></i>
+                                            <p class="small text-muted mb-0">No image uploaded</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <label class="mt-2">Upload New Image</label>
+                                {% render_field productForm.product_image class="form-control-file" %}
+                            </div>
+                            
+                            {% if productForm.category %}
+                            <div class="form-group">
+                                <label><i class="fa fa-list mr-2 text-success"></i>Change Category</label>
+                                {% render_field productForm.category class="form-control" %}
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <center><button type="submit" class="btnSubmit">Update Product Details</button></center>
-                </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-update">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</form>
-<!--
-developed By : sumit kumar
--->
+</div>
 
 {% endblock content %}

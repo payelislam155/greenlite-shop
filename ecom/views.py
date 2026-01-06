@@ -25,6 +25,8 @@ from django.utils import timezone # Alternatively, use Django's timezone
 
 def home_view(request):
     products = models.Product.objects.all()
+    
+    # Cart counter logic
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
         counter = product_ids.split('|')
@@ -32,10 +34,14 @@ def home_view(request):
     else:
         product_count_in_cart = 0
     
-    # REMOVE OR COMMENT OUT THESE TWO LINES:
-    # if request.user.is_authenticated:
-    #     return HttpResponseRedirect('afterlogin')
+    # CHECK IF USER IS A CUSTOMER
+    if request.user.is_authenticated and is_customer(request.user):
+        return render(request, 'ecom/customer_home.html', {
+            'products': products,
+            'product_count_in_cart': product_count_in_cart
+        })
     
+    # Default view for guests/admin
     return render(request, 'ecom/index.html', {
         'products': products,
         'product_count_in_cart': product_count_in_cart

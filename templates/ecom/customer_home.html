@@ -1,193 +1,348 @@
 {% extends 'ecom/customer_base.html' %}
 {% load static %}
 {% block content %}
-<style media="screen">
-  body {
-    background-color: #f7f7f7;
-  }
 
-  /* Product Card Styling */
-  .el-wrapper {
-    width: 100%; /* Changed to fluid within column */
-    max-width: 360px;
-    padding: 15px;
-    margin: 15px auto;
-    background-color: #66A3FF;
-    border-radius: 0px;
-    box-shadow: 2px 2px 5px #9b9b9b;
-    border: 3px solid #fe5f00;
-    position: relative;
-    border-radius: 12px;
-  }
+<style>
+    body { font-family: 'Montserrat', sans-serif; color: #333; background-color: #fff; }
+    .bg-yellow { background-color: #ffc107; } 
+    .bg-dark-custom { background-color: #1a1a1a; color: white; }
+    
+    /* Stats Section */
+    .stat-box { padding: 30px; min-height: 120px; margin-top: 60px;}
+    .progress-line { height: 4px; background: #333; width: 60%; margin-top: 10px; position: relative; }
+    .progress-line::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 40%; background: #fff; }
 
-  .el-wrapper:hover .h-bg { left: 0px; }
-  .el-wrapper:hover .price {
-    left: 20px;
-    transform: translateY(-50%);
-    color: #f3f3f3;
-  }
-  .el-wrapper:hover .add-to-cart { left: 50%; }
-  .el-wrapper:hover .img {
-    filter: blur(7px);
-    opacity: 0.4;
-  }
-  .el-wrapper:hover .info-inner { bottom: 155px; }
-  .el-wrapper:hover .a-size {
-    transition-delay: 300ms;
-    bottom: 50px;
-    opacity: 1;
-  }
+    /* Advantage Cards */
+    .adv-card { padding: 40px 20px; text-align: center; border: none; border-radius: 0; transition: transform 0.3s; height: 100%; }
+    .adv-card i { font-size: 2.5rem; margin-bottom: 20px; }
+    .adv-card:hover { transform: translateY(-5px); }
 
-  .el-wrapper .box-up {
-    width: 100%;
-    height: 300px;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-  }
+    /* Image Grids */
+    .feature-img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; }
+    .secondary-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
 
-  .el-wrapper .box-down {
-    width: 100%;
-    height: 60px;
-    position: relative;
-    overflow: hidden;
-  }
+    /* Dynamic Product Section */
+    .product-card { border: none; text-align: center; transition: 0.3s; background: #fff; }
+    .product-card:hover { transform: scale(1.02); }
+    .product-img-wrapper { background: #f8f9fa; padding: 20px; position: relative; border-radius: 15px; height: 280px; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+    .product-img-wrapper img { max-height: 100%; transition: 0.5s; }
+    .product-price-tag { 
+        position: absolute; bottom: 15px; right: 15px; 
+        background: #1a1a1a; color: white; border-radius: 50%; 
+        width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+        font-weight: bold; font-size: 0.9rem; z-index: 2;
+    }
+    .btn-add-custom { background: #1a1a1a; color: white; border-radius: 0; width: 100%; font-weight: bold; padding: 10px; border: none; transition: 0.3s; }
+    .btn-add-custom:hover { background: #ffc107; color: #1a1a1a; }
+    .star-rating { color: #ffc107; font-size: 0.8rem; }
+    .btn-add-to-cart {
+        background: #4361ee;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 8px; /* Rounded corners for a modern feel */
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none !important;
+    }
 
-  .el-wrapper .img {
-    transition: all 800ms cubic-bezier(0, 0, 0.18, 1);
-  }
+    .btn-add-to-cart i {
+        font-size: 16px;
+        transition: transform 0.3s;
+    }
 
-  .h-bg {
-    transition: all 800ms cubic-bezier(0, 0, 0.18, 1);
-    width: 660px;
-    height: 100%;
-    background-color: #4cd964;
-    border-radius: 10px;
-    position: absolute;
-    left: -659px;
-  }
+    .btn-add-to-cart:hover {
+        background: #ffc107;
+        color: #1a1a1a;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+    }
 
-  .info-inner {
-    transition: all 400ms cubic-bezier(0, 0, 0.18, 1);
-    position: absolute;
-    width: 100%;
-    bottom: 10px;
-  }
+    .btn-add-to-cart:hover i {
+        transform: rotate(-15deg) scale(1.2);
+    }
 
-  .info-inner .p-company {
-    display: block;
-    font-family: 'Lato', sans-serif;
-    font-size: 16px;
-    color: #fbfbfb;
-  }
+    /* Subtle Card Shadow update */
+    .product-card {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #81a4cd;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    }
 
-  .a-size {
-    transition: all 300ms cubic-bezier(0, 0, 0.18, 1);
-    position: absolute;
-    width: 100%;
-    bottom: -20px;
-    font-family: 'PT Sans', sans-serif;
-    color: #2b2b2b;
-    font-weight: 600;
-    opacity: 0;
-    padding: 0 10px;
-  }
+   .home-schedule-box {
+        background: linear-gradient(145deg, #ffffff, #f0f4f8);
+        border-radius: 20px;
+        padding: 45px 25px;
+        border: 2px solid #e2e8f0;
+    }
+    .schedule-title {
+        font-weight: 800; /* Extra Bold */
+        font-size: 1.8rem; /* Medium Large Size */
+        letter-spacing: 1px;
+        color: #1a1a1a;
+        margin-bottom: 35px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+    .mini-time-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+        border-top: 5px solid; /* Dynamic color */
+        transition: all 0.3s ease;
+    }
+    .mini-time-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+    .schedule-item-text {
+        font-weight: 700; /* Bold */
+        font-size: 1.05rem; /* Medium Size */
+        color: #2d3436;
+    }
+    .time-badge-custom {
+        font-weight: 800;
+        background: #1a1a1a !important;
+        color: #ffffff !important;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+  </style>
 
-  .cart {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    font-weight: 700;
-  }
-
-  .cart .price {
-    transition: all 600ms cubic-bezier(0, 0, 0.18, 1);
-    transition-delay: 100ms;
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    color: #252525;
-  }
-
-  .cart .add-to-cart {
-    transition: all 600ms cubic-bezier(0, 0, 0.18, 1);
-    transition-delay: 100ms;
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 110%;
-    transform: translate(-50%, -50%);
-  }
-
-  .cart .add-to-cart .txt {
-    font-size: 12px;
-    color: #fff;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .products-container {
-    padding-bottom: 100px;
-  }
-</style>
-
-<header class="">
+<div style="margin-top: -30px;">
         {% include "ecom/homebase_header.html" %}
-</header>
-
-<div class="container products-container">
-  {% if products %}
-    <h3 style="text-align:center; color:#3E454C; margin-top: 30px;">{{ word }}</h3>
-    <br>
-    <div class="row">
-      {% for p in products %}
-      <div class="col-md-4 col-sm-6">
-        <div class="el-wrapper">
-          <div class="box-up">
-            <img class="img" src="{% static p.product_image.url %}" alt="product pic" height="300px" width="300px">
-            <div class="img-info">
-              <div class="info-inner">
-                <span style="background-color:#fe5f00; border-radius: 10px; font-weight: bold;" class="p-company">{{p.name}}</span>
-              </div>
-              <div class="a-size">{{p.description}}</div>
-            </div>
-          </div>
-
-          <div class="box-down">
-            <div class="h-bg">
-              <div class="h-bg-inner"></div>
-            </div>
-
-            <a class="cart" href="{% url 'add-to-cart' p.id %}?next_page={{ request.path }}">
-              <span class="price">৳ {{p.price}}</span>
-              <span class="add-to-cart">
-                <span class="txt"><i class="fa fa-shopping-cart"></i> Add To Cart</span>
-              </span>
-            </a>
-          </div>
+</div>
+                        <!-----Fashion------>
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">New Arrivals</h2>
+        <div class="d-flex justify-content-center gap-2">
+            <span class="badge bg-warning text-dark px-3 py-2">ALL FASHION</span>
         </div>
-      </div>
-      {% endfor %}
     </div>
-
-  {% else %}
-    <h3 style="text-align:center; color:#3E454C; margin-top: 50px;">No Search Found</h3>
-  {% endif %}
+    
+    <div class="row g-4">
+        {% for p in products %}
+            {% if p.category == 'Fashion' %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="{% static p.product_image.url %}" class="img-fluid" alt="{{p.name}}">
+                        <div class="product-price-tag">৳{{p.price}}</div>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">{{p.name}}</h6>
+                        <div class="star-rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="small text-success fw-bold text-truncate">{{p.description}}</p>
+                      <a href="{% url 'add-to-cart' p.id %}?next_page=/" class="btn-add-to-cart">
+        <i class="fas fa-shopping-bag"></i> 
+        <span>Add to Cart</span>
+    </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No Fashion items available right now.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+                        <!-----Watch------>
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">New Arrivals</h2>
+        <div class="d-flex justify-content-center gap-2">
+            <span class="badge bg-warning text-dark px-3 py-2">STYLISH WATCH</span>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        {% for p in products %}
+            {% if p.category == 'Watch' %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="{% static p.product_image.url %}" class="img-fluid" alt="{{p.name}}">
+                        <div class="product-price-tag">৳{{p.price}}</div>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">{{p.name}}</h6>
+                        <div class="star-rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="small text-success fw-bold text-truncate">{{p.description}}</p>
+                      <a href="{% url 'add-to-cart' p.id %}?next_page=/" class="btn-add-to-cart">
+        <i class="fas fa-shopping-bag"></i> 
+        <span>Add to Cart</span>
+    </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No Fashion items available right now.</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
-<script>
-  {% if messages %}
-    {% for message in messages %}
-      alert('{{message}}');
-    {% endfor %}
-  {% endif %}
-</script>
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">New Books</h2>
+        <div class="d-flex justify-content-center gap-2">
+            <span class="badge bg-warning text-dark px-3 py-2">Discount</span>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        {% for p in products %}
+            {% if p.category == 'Books' %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="{% static p.product_image.url %}" class="img-fluid" alt="{{p.name}}">
+                        <div class="product-price-tag">৳{{p.price}}</div>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1">{{p.name}}</h6>
+                        <div class="star-rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="small text-success fw-bold text-truncate">{{p.description}}</p>
+                      <a href="{% url 'add-to-cart' p.id %}?next_page=/" class="btn-add-to-cart">
+        <i class="fas fa-shopping-bag"></i> 
+        <span>Add to Cart</span>
+    </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No Fashion items available right now.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
+
+
+<div class="container text-center my-5">
+    <h2 class="fw-bold text-uppercase mb-5" style="letter-spacing: 2px;">Our Delivery</h2>
+    <div class="row g-0 shadow-lg">
+        <div class="col-md-4">
+            <div class="adv-card bg-dark-custom">
+                <i class="far fa-clock text-warning"></i>
+                <h5 class="fw-bold">Quick Order</h5>
+                <p class="small text-secondary">Simplified process for all your shopping needs.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="adv-card bg-yellow text-dark">
+                <i class="fas fa-truck"></i>
+                <h5 class="fw-bold">Fast Delivery</h5>
+                <p class="small">Global logistics to reach your doorstep in record time.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="adv-card bg-dark-custom">
+                <i class="fas fa-dollar-sign text-warning"></i>
+                <h5 class="fw-bold">Best Price Offer</h5>
+                <p class="small text-secondary">Competitive direct-from-factory pricing.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="home-schedule-box shadow-lg">
+        <div class="text-center">
+            <h2 class="schedule-title text-uppercase">
+                <i class="fas fa-ship me-2" style="color: #2a5298;"></i> লঞ্চ সময়সূচী (ঢাকা ⇌ ভোলা)
+            </h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="mini-time-card" style="border-top-color: #ff9f43;">
+                    <h5 class="fw-bold mb-4 text-warning" style="font-size: 1.25rem;">
+                        <i class="fas fa-sun me-2"></i> সকাল ও দুপুর
+                    </h5>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">গ্রিনলাইন-৩ (সকাল)</span> 
+                        <span class="badge time-badge-custom">০৮:৩০ AM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">কর্ণফুলী-১৪ (সকাল)</span> 
+                        <span class="badge time-badge-custom">০৯:০০ AM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">ফারহান-৯ (দুপুর)</span> 
+                        <span class="badge time-badge-custom">১১:৪৫ AM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="schedule-item-text">নূরজাহান (দুপুর)</span> 
+                        <span class="badge time-badge-custom">০১:০০ PM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mini-time-card" style="border-top-color: #4834d4;">
+                    <h5 class="fw-bold mb-4" style="color: #4834d4; font-size: 1.25rem;">
+                        <i class="fas fa-moon me-2"></i> বিকাল ও রাত
+                    </h5>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">সুরভী-৮ (বিকাল)</span> 
+                        <span class="badge time-badge-custom">০২:০০ PM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">কর্ণফুলী-৩ (বিকাল)</span> 
+                        <span class="badge time-badge-custom">০৪:০০ PM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <span class="schedule-item-text">রাজারহাট-বি (রাত)</span> 
+                        <span class="badge time-badge-custom">১০:০০ PM</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="schedule-item-text">কর্ণফুলী-১১ (রাত)</span> 
+                        <span class="badge time-badge-custom">১০:০০ PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'customer-cabin-booking' %}" class="btn btn-sm btn-outline-primary fw-bold">View All & Book</a>
+        </div>
+    </div>
+</div>
 {% endblock content %}
