@@ -609,7 +609,6 @@ def aboutus_view(request):
     return render(request,'ecom/aboutus.html')
 
 # ecom/views.py
-
 def contactus_view(request):
     sub = forms.ContactusForm()
     if request.method == 'POST':
@@ -640,6 +639,9 @@ def contactus_view(request):
                 
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form': sub})
+
+
+
 
 # Add this new view
 @login_required(login_url='adminlogin')
@@ -844,6 +846,3 @@ def package_view(request):
         'max_price': max_price,
         'word': category if category else "All Collection"
     })
-    
-    
-    

@@ -26,6 +26,8 @@ class Product(models.Model):
         ('Woman Dress','Woman Dress'),
         ('Kitchen Utensils','Kitchen Utensils'),
         ('Electronics','Electronics'),
+        ('Tour','Tour'),
+        
     )
     name = models.CharField(max_length=40)
     product_image = models.ImageField(upload_to='product_image/', null=True, blank=True)
